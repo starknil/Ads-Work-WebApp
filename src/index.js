@@ -27,6 +27,19 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  // Optional: log to monitoring service
+});
+
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  // Optional: clean shutdown
+  // process.exit(1);  <-- be careful with Passenger
+});
+
 app.get("/", (req, res) => {
   return res.sendFile(__dirname + "/public/index.html");
 });
@@ -677,14 +690,18 @@ app.post("/request-withdraw", async (req, res) => {
 });
 
 (async () => {
-  await connectDB();
-  bot.launch().catch((err) => {
-    console.error("Failed to launch bot:", err);
-  });
-  console.log("Bot is running...");
-  app.listen(process.env.PORT || 5000, () => {
-    console.log(
-      `Server is running on port http://localhost:${process.env.PORT || 5000}`
-    );
-  });
+  try {
+    await connectDB();
+    bot.launch().catch((err) => {
+      console.error("Failed to launch bot:", err);
+    });
+    console.log("Bot is running...");
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(
+        `Server is running on port http://localhost:${process.env.PORT || 5000}`
+      );
+    });
+  } catch (e) {
+    console.log(e);
+  }
 })();
