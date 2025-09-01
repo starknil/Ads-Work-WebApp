@@ -30,14 +30,11 @@ app.use(express.static("public"));
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
-  // Optional: log to monitoring service
 });
 
 
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
-  // Optional: clean shutdown
-  // process.exit(1);  <-- be careful with Passenger
 });
 
 app.get("/", (req, res) => {

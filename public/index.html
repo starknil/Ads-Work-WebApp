@@ -746,7 +746,11 @@
             let a = localStorage.getItem("last-pop-show");
             if (!a || ((Date.now() - Number(a)) / 1000) > Number(appState.userData.adsPreviewTime)) {
                 localStorage.setItem("last-pop-show", Date.now());
-                window[`show_9798836`]();
+                try {
+                    window[`show_9798836`]();
+                } catch(e){
+                    console.log("error while showing Ad ", e);
+                }
             }
         }
 
@@ -1774,7 +1778,7 @@
                 // daily claim
                 const allow = !lastCheckin || lastCheckin < today;
 
-                appState.userData.isDayClaimable = !allow;
+                appState.userData.isDayClaimable = allow;
 
                 // streak logic
                 if (!lastCheckin) {
