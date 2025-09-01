@@ -746,7 +746,7 @@
             if (!a || ((Date.now() - Number(a)) / 1000) > Number(appState.userData.adsPreviewTime)) {
                 localStorage.setItem("last-pop-show", Date.now());
                 try {
-                    window[`show_9798836`]();
+                    window[`show_9803143`]();
                 } catch(e){
                     console.log("error while showing Ad ", e);
                 }
@@ -1535,12 +1535,12 @@
         document.querySelector("#show_ad").addEventListener("click", async (element) => {
 
             const adsProviders = {
-                giga: 10,
-                moneyTag: 1,
+                giga: 2,
+                moneyTag: 2,
                 adexium: 2,
                 richAds: 2
             }
-            const moneyTagId = 9751917 //9737042
+            const moneyTagId = 9803143;
 
             if (appState.userData.hourlyTasks === 0) {
                 resetShowedAds();

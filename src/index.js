@@ -132,7 +132,7 @@ app.post("/register", async (req, res) => {
     );
 
     const inAll = joinedAll.every((m) =>
-      ["member", "creator", "adminstrator"].includes(m.status)
+      ["member", "creator", "administrator"].includes(m.status)
     );
 
     if (!inAll) {
@@ -493,7 +493,7 @@ app.post("/verify-task", async (req, res) => {
         found = false;
       }
 
-      if (!found || (found.status !== "member" && found.status !== "creator")) {
+      if (!found || (found.status !== "member" && found.status !== "creator" && found.status !== "administrator")) {
         return res.status(200).json({
           status: false,
           txt: "You must join the channel to get reward!",
