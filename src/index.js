@@ -124,7 +124,7 @@ app.post("/register", async (req, res) => {
       );
     }
 
-    const channels = ["codingdemos", "codingdemos", "codingdemos"];
+    const channels = ["AdWorksyNews", "Airdrops_Galaxy", "CryptoAirdropRush"];
     const joinedAll = await Promise.all(
       channels.map((c) => {
         return bot.telegram.getChatMember(`@${c}`, userId);

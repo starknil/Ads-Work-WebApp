@@ -14,13 +14,14 @@
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"></script>
-    <style>
+
+       <style>
         :root {
-            --bg-color: #F9FAFB;
+            --bg-color: #121212;
             --primary-color: #7c3aed;
-            --primary-light: rgba(160, 128, 217, 0.1);
-            --text-color: #111827;
-            --text-secondary: #131313;
+            --primary-light: rgba(124, 58, 237, 0.1);
+            --text-color: #e0e0e0;
+            --text-secondary: #a0a0a0;
             --success-color: #10b981;
             --error-color: #ef4444;
         }
@@ -50,33 +51,19 @@
             left: -50%;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center,
-                    rgba(124, 58, 237, 0.15) 0%,
-                    transparent 70%);
+            background: radial-gradient(circle at center, 
+                        rgba(124, 58, 237, 0.15) 0%, 
+                        transparent 70%);
             z-index: -1;
             animation: pulse 15s infinite alternate;
         }
 
         @keyframes pulse {
-            0% {
-                transform: translate(0, 0);
-            }
-
-            25% {
-                transform: translate(5%, 5%);
-            }
-
-            50% {
-                transform: translate(0, 10%);
-            }
-
-            75% {
-                transform: translate(-5%, 5%);
-            }
-
-            100% {
-                transform: translate(0, 0);
-            }
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(5%, 5%); }
+            50% { transform: translate(0, 10%); }
+            75% { transform: translate(-5%, 5%); }
+            100% { transform: translate(0, 0); }
         }
 
         .app-content {
@@ -150,7 +137,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(6, 0, 17, 0.4);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
             position: relative;
             overflow: hidden;
         }
@@ -162,36 +149,28 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(to bottom right,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0) 45%,
-                    rgba(255, 255, 255, 0.3) 48%,
-                    rgba(255, 255, 255, 0) 52%,
-                    rgba(255, 255, 255, 0) 100%);
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0) 45%,
+                rgba(255, 255, 255, 0.3) 48%,
+                rgba(255, 255, 255, 0) 52%,
+                rgba(255, 255, 255, 0) 100%
+            );
             transform: rotate(30deg);
             animation: shine 3s infinite;
             opacity: 0;
         }
 
         @keyframes shine {
-            0% {
-                transform: translateX(-100%) rotate(30deg);
-                opacity: 0;
-            }
-
-            20% {
-                opacity: 0.5;
-            }
-
-            100% {
-                transform: translateX(100%) rotate(30deg);
-                opacity: 0;
-            }
+            0% { transform: translateX(-100%) rotate(30deg); opacity: 0; }
+            20% { opacity: 0.5; }
+            100% { transform: translateX(100%) rotate(30deg); opacity: 0; }
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 2px 10px rgba(6, 0, 15, 0.6);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
         }
 
         .btn:active {
@@ -225,16 +204,14 @@
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
         @media (max-width: 480px) {
             .app-content {
                 padding: 16px;
             }
-
+            
             h1 {
                 font-size: 22px;
             }
@@ -248,20 +225,21 @@
 </head>
 
 <body>
-    <div class="app-content">
+
+
+        <div class="app-content">
         <div id="welcome-lottie" class="welcome-lottie"></div>
         <h1 id="welcome-title">Welcome!</h1>
-        <p>Join our bot and earn scratch cards for referring users and completing simple tasks. Scratch to win real cash
-            and withdraw anytime!</p>
-
+        <p>Join our bot and earn scratch cards for referring users and completing simple tasks. Scratch to win real cash and withdraw anytime!</p>
+        
         <div class="features">
             <div class="feature">
                 <div class="feature-icon">
                     <i class="fas fa-gift"></i>
                 </div>
                 <div>
-                    <strong>Instant Rewards
-                        <div class="text-secondary">Get scratch cards for every task</div>
+                    <strong>Instant Rewards</ UrlencodedFormEntity>
+                    <div class="text-secondary">Get scratch cards for every task</div>
                 </div>
             </div>
             <div class="feature">
@@ -283,24 +261,24 @@
                 </div>
             </div>
         </div>
-
-        <a href="https://t.me/codingdemos" target="_blank" class="btn channel-btn">
+        
+        <a href="https://t.me/AdWorksyNews" target="_blank" class="btn channel-btn">
+            Join Channel to Continue <i class="fas fa-arrow-right"></i>
+        </a>
+        
+         <a href="https://t.me/Airdrops_Galaxy" target="_blank" class="btn channel-btn">
             Join Channel to Continue <i class="fas fa-arrow-right"></i>
         </a>
 
-        <a href="https://t.me/codingdemos" target="_blank" class="btn channel-btn">
+        <a href="https://t.me/CryptoAirdropRush" target="_blank" class="btn channel-btn">
             Join Channel to Continue <i class="fas fa-arrow-right"></i>
         </a>
-
-        <a href="https://t.me/codingdemos" target="_blank" class="btn channel-btn">
-            Join Channel to Continue <i class="fas fa-arrow-right"></i>
-        </a>
-
+        
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p>Setting up your account...</p>
         </div>
-
+        
         <button class="btn" id="continue-btn">
             Continue <i class="fas fa-arrow-right"></i>
         </button>
