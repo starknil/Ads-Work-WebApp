@@ -57,7 +57,7 @@ bot.start(async (ctx) => {
 
   const { balance, tgTasksDone: lifetimeTasks, refererEarnings, bonuses } = user;
 
-  const photoSource = "ads-work-image.png";
+  const photoSource = "ads-work-image.jpg";
   const message = `
 <b>Hello, ${ctx.from.first_name || ""} ${ctx.from.last_name || ""}!👋🏻</b>
 
