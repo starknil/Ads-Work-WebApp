@@ -36,13 +36,16 @@ process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
 });
 
+
 app.get("/", (req, res) => {
   return res.sendFile(__dirname + "/public/index.html");
 });
 
+
 app.get("/register.html", (req, res) => {
   return res.sendFile(__dirname + "/public/register.html");
 });
+
 
 app.use((req, res, next) => {
   const tg = req.body?.tg;
@@ -98,8 +101,11 @@ app.use((req, res, next) => {
   next();
 });
 
+
 app.post("/register", async (req, res) => {
-  const { ip, userId } = req.body;
+
+  const { userId } = req.body;
+  const ip = req.ip;
 
   try {
     if (!ip || !userId) {
@@ -112,6 +118,12 @@ app.post("/register", async (req, res) => {
       throw new Error(
         `Sorry you got into ${vpn.region}-${vpn.country} with VPN. Turn if OFF!`
       );
+    };
+
+    const ipAlready = await GET_USER(ip, 'ip');
+
+    if (ipAlready){
+      throw new Error("Duplicate account detected. Sorry, multiple accounts are not allow!");
     }
 
     const user = await GET_USER(userId);
@@ -151,6 +163,7 @@ app.post("/register", async (req, res) => {
       bonuses: 0,
       lastCheckin: null,
       tgTasksDone: 0,
+      ip,
       createdAt: new Date(),
     };
 
@@ -232,27 +245,13 @@ app.post("/bot-settings", async (req, res) => {
 app.post("/user-settings", async (req, res) => {
   try {
 
-
-    async function getIP() {
-      try {
-        const response = await fetch("https://api.ipify.org?format=json");
-        const data = await response.json();
-        return data.ip;
-      } catch (error) {
-        console.error("Error fetching IP:", error);
-        return "unknown";
-      }
-    }
-
-console.log(req.ip);
-
     let vpn = await usingVpn(req.ip);
     if (vpn.vpn === true) {
       console.log("User is using VPN! ", vpn);
       throw new Error(
         `Sorry you got into ${vpn.region}-${vpn.country} with VPN. Turn if OFF!`
       );
-    }
+    };
 
     let user = await FETCH_MERGE_PROFILE(req.body.tg.initDataUnsafe.user.id);
     if (user.length === 0) {
@@ -415,18 +414,6 @@ app.post("/ads-reward", async (req, res) => {
       message: `🎉 You earned ${adsReward} ${currency} for viewing the ad!`,
     });
 
-    bot.telegram.sendMessage(
-      userId,
-      "<b>🎉 Awesome!</b> You've earned " +
-        adsReward +
-        " " +
-        currency +
-        " for viewing the AD!",
-      {
-        parse_mode: "HTML",
-      }
-    );
-
     if (totalCount === 5 && upline && !uplineDirectBonus) {
       await UPDATE_USER(userId, {
         $set: {
@@ -544,32 +531,6 @@ app.post("/link-reward", async (req, res) => {
 
     const { currency } = bott;
 
-    /*
-    let { lastCheckin, streak } = user;
-
-    const today = new Date().setHours(0, 0, 0, 0);
-
-    const lastChecked = lastCheckin
-      ? new Date(lastCheckin).setHours(0, 0, 0, 0)
-      : null;
-    const canClaim = !lastCheckin || lastChecked < today;
-
-    if (!canClaim) {
-      throw new Error("Suspicious claiming attempt!");
-    }
-
-
-    if (!lastChecked) {
-      streak = 1;
-    } else if (lastChecked === today - 24 * 60 * 60 * 1000) {
-      streak += 1;
-    } else if (lastChecked < today - 24 * 60 * 60 * 1000) {
-      streak = 1;
-    }
-
-    const reward = daysEarning[streak - 1] || daysEarning[0];
-*/
-
     const reward = 10;
 
     console.log(`Claiming reward for link visit!`);
@@ -582,18 +543,6 @@ app.post("/link-reward", async (req, res) => {
     });
 
     console.log("Rewarded");
-
-    bot.telegram.sendMessage(
-      userId,
-      "<b>🎉 Awesome!</b> You've earned " +
-        reward +
-        " " +
-        currency +
-        " for link visit reward!",
-      {
-        parse_mode: "HTML",
-      }
-    );
 
     return res.status(200).json({
       reward,

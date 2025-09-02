@@ -110,27 +110,7 @@
             animation: gradient 15s ease infinite;
         }
     </style>
-
-
-    <style>
-        /*
-        section > div {
-            background-color:  rgba(124, 58, 237, 0.05) !important;
-            border-color:  rgba(124, 58, 237, 0.2) !important;
-
-        }
-/*
-        button {
-            background-color: #7c3aed !important;
-            color: white;
-        }
-
-        */
-    </style>
-
 </head>
-
-
 
 <body class="gradient-bgg flex items-center justify-center min-h-screen">
 
@@ -398,7 +378,8 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-white">2. Share with Friends</p>
-                                    <p class="text-xs text-white opacity-90">Use the Telegram, WhatsApp, or Twitter/X buttons to
+                                    <p class="text-xs text-white opacity-90">Use the Telegram, WhatsApp, or Twitter/X
+                                        buttons to
                                         share your link.</p>
                                 </div>
                             </div>
@@ -421,8 +402,7 @@
                         <label class="block text-sm font-semibold text-white mb-2 tracking-wide">Your Referral
                             Link</label>
                         <div class="relative flex items-center group">
-                            <input type="text" id="referral-link" value=""
-                                readonly
+                            <input type="text" id="referral-link" value="" readonly
                                 class="w-full p-3 pl-4 pr-12 border border-gray-300 rounded-xl bg-gray-50 text-gray-700 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 shadow-sm group-hover:shadow-md">
                             <button type="button" id="copy-referral"
                                 class="absolute right-2 top-1/2 transform -translate-y-1/2 text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
@@ -676,27 +656,27 @@
     <script>
 
         let tg = window.Telegram.WebApp;
-/*
-        tg = {
-            ...tg,
-            initData: "query_id=AAF3S49XAwAAAHdLj1e5NnX3&user=%7B%22id%22%3A7911459703%2C%22first_name%22%3A%22Kingstar%20%F0%9F%AB%86%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22gill728%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FUlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg%22%7D&auth_date=1755720767&signature=STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw&hash=c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41",
-            initDataUnsafe: {
-                query_id: 'AAF3S49XAwAAAHdLj1e5NnX3',
-                user: {
-                    id: 7911459703,
-                    first_name: 'Bahdboy',
-                    last_name: 'kingstar',
-                    username: 'gill728',
-                    language_code: 'en',
-                    allows_write_to_pm: true,
-                    photo_url: 'https://t.me/i/userpic/320/UlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg'
-                },
-                auth_date: '1755720767',
-                signature: 'STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw',
-                hash: 'c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41'
-            }
-        };
-*/
+        /*
+                tg = {
+                    ...tg,
+                    initData: "query_id=AAF3S49XAwAAAHdLj1e5NnX3&user=%7B%22id%22%3A7911459703%2C%22first_name%22%3A%22Kingstar%20%F0%9F%AB%86%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22gill728%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FUlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg%22%7D&auth_date=1755720767&signature=STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw&hash=c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41",
+                    initDataUnsafe: {
+                        query_id: 'AAF3S49XAwAAAHdLj1e5NnX3',
+                        user: {
+                            id: 7911459703,
+                            first_name: 'Bahdboy',
+                            last_name: 'kingstar',
+                            username: 'gill728',
+                            language_code: 'en',
+                            allows_write_to_pm: true,
+                            photo_url: 'https://t.me/i/userpic/320/UlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg'
+                        },
+                        auth_date: '1755720767',
+                        signature: 'STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw',
+                        hash: 'c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41'
+                    }
+                };
+        */
         const toastifyConfig = {
             duration: 3000,
             gravity: 'top',
@@ -722,7 +702,7 @@
                 adsReward: 0,
                 tgTasks: [],
                 adsPreviewTime: 180,
-                botLink: 'https://t.me/AdWorksyBot?startapp='+tg.initDataUnsafe.user.id,
+                botLink: 'https://t.me/AdWorksyBot?startapp=' + tg.initDataUnsafe.user.id,
 
                 name: 'User',
                 photo_url: null,
@@ -747,7 +727,7 @@
                 try {
                     window[`show_9803143`]();
                     localStorage.setItem("last-pop-show", Date.now());
-                } catch(e){
+                } catch (e) {
                     console.log("error while showing Ad ", e);
                 }
             }

@@ -54,7 +54,6 @@ const connectDB = async () => {
       }
     ]);
     */
-    
   } catch (e) {
     throw new Error("Error connecting to the database " + e);
   }
@@ -70,9 +69,14 @@ const CREATE_USER = async (data) => {
   }
 };
 
-const GET_USER = async (user) => {
+const GET_USER = async (user, f) => {
   try {
-    const result = await users.findOne({ user });
+    let result;
+    if (f === "ip") {
+      result = await users.findOne({ ip: f });
+    } else {
+      result = await users.findOne({ user });
+    }
     return result;
   } catch (e) {
     console.error("Error getting user!", e);
@@ -88,7 +92,6 @@ const UPDATE_USER = async (user, data) => {
     throw new Error("Error updating user! " + e.message);
   }
 };
-
 
 const FETCH_MERGE_PROFILE = async (user) => {
   try {
@@ -108,7 +111,7 @@ const FETCH_MERGE_PROFILE = async (user) => {
           $lookup: {
             from: "available-telegram-tasks",
             pipeline: [
-              { $match: { isActive: true, performedBy: {$ne: user} }}
+              { $match: { isActive: true, performedBy: { $ne: user } } },
             ],
             as: "tgTasks",
           },
@@ -116,10 +119,7 @@ const FETCH_MERGE_PROFILE = async (user) => {
         {
           $lookup: {
             from: "withdrawals",
-            pipeline: [
-              { $match: { user } },
-              { $sort: { createdAt: -1 } }
-            ],
+            pipeline: [{ $match: { user } }, { $sort: { createdAt: -1 } }],
             as: "withdrawals",
           },
         },
@@ -127,7 +127,7 @@ const FETCH_MERGE_PROFILE = async (user) => {
           $lookup: {
             from: "ads-task-history",
             pipeline: [
-              { $match: { user } } ,
+              { $match: { user } },
               {
                 $facet: {
                   lastHour: [
@@ -141,9 +141,7 @@ const FETCH_MERGE_PROFILE = async (user) => {
                   totalEarned: [
                     { $group: { _id: null, sum: { $sum: "$reward" } } },
                   ],
-                  totalCount: [
-                    { $count: "count" }
-                  ]
+                  totalCount: [{ $count: "count" }],
                 },
               },
               {
@@ -158,8 +156,8 @@ const FETCH_MERGE_PROFILE = async (user) => {
                     $ifNull: [{ $arrayElemAt: ["$totalEarned.sum", 0] }, 0],
                   },
                   totalCount: {
-                    $ifNull: [{ $arrayElemAt: ["$totalCount.count", 0] }, 0]
-                  }
+                    $ifNull: [{ $arrayElemAt: ["$totalCount.count", 0] }, 0],
+                  },
                 },
               },
             ],
@@ -181,26 +179,21 @@ const FETCH_MERGE_PROFILE = async (user) => {
   }
 };
 
-
-
 const ADD_ADS_WATCHED = async (data) => {
   try {
     return await adsTaskHistory.insertOne(data);
   } catch (e) {
-   throw new Error("Error registering ads details!"); 
+    throw new Error("Error registering ads details!");
   }
 };
-
 
 const ADD_TASK = async (task) => {
   try {
     return await tgTasks.insertOne(task);
   } catch (e) {
-    throw new Error("Error fetching task! "+ e);
+    throw new Error("Error fetching task! " + e);
   }
 };
-
-
 
 const GET_TASK = async (taskId) => {
   try {
@@ -220,7 +213,6 @@ const UPDATE_TASK = async (taskId, data) => {
   }
 };
 
-
 const ADD_WITHDRAWAL = async (data) => {
   try {
     const c = await withdraws.insertOne(data);
@@ -231,18 +223,15 @@ const ADD_WITHDRAWAL = async (data) => {
   }
 };
 
-
-
 const GET_WITHDRAWAL = async (withdrawId) => {
   try {
-    const c = await withdraws.findOne({withdrawId});
+    const c = await withdraws.findOne({ withdrawId });
     return c;
   } catch (e) {
     console.log(e);
     return false;
   }
 };
-
 
 const UPDATE_WITHDRAWAL = async (withdrawId, data) => {
   try {
@@ -252,7 +241,6 @@ const UPDATE_WITHDRAWAL = async (withdrawId, data) => {
     throw new Error("Error updating withdrawal! " + e.message);
   }
 };
-
 
 module.exports = {
   connectDB,
@@ -266,5 +254,5 @@ module.exports = {
   UPDATE_TASK,
   ADD_WITHDRAWAL,
   GET_WITHDRAWAL,
-  UPDATE_WITHDRAWAL
+  UPDATE_WITHDRAWAL,
 };
