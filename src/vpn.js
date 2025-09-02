@@ -33,12 +33,4 @@ const checkIfVPN = async (ip) => {
   }
 }
 
-(async () => {
-  const test1 = await checkIfVPN("147.185.243.160");
-  console.log(test1);
-
-  const test2 = await checkIfVPN("41.190.xxx.xxx");
-  console.log(test2);
-})();
-
 module.exports = checkIfVPN;

@@ -19,7 +19,7 @@
     <script src="https://cdn.giga.pub/script/offer/loader/loader.js"></script>
 
     <script src="https://ad.gigapub.tech/script?id=1897"></script>
-    <script src='//libtl.com/sdk.js' data-zone='9751917' data-sdk='show_9751917'></script>
+    <script src='//libtl.com/sdk.js' data-zone='9803143' data-sdk='show_9803143'></script>
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
     <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
     <script async src="https://partner.adextra.io/jt/57ee3d83dda0a7fd3f29e0859bbc6d8bc4046103.js"></script>
@@ -676,7 +676,7 @@
     <script>
 
         let tg = window.Telegram.WebApp;
-/*
+
         tg = {
             ...tg,
             initData: "query_id=AAF3S49XAwAAAHdLj1e5NnX3&user=%7B%22id%22%3A7911459703%2C%22first_name%22%3A%22Kingstar%20%F0%9F%AB%86%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22gill728%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FUlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg%22%7D&auth_date=1755720767&signature=STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw&hash=c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41",
@@ -696,7 +696,7 @@
                 hash: 'c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41'
             }
         };
-*/
+
         const toastifyConfig = {
             duration: 3000,
             gravity: 'top',
@@ -721,7 +721,7 @@
                 withdrawalFee: 0,
                 adsReward: 0,
                 tgTasks: [],
-                adsPreviewTime: 120,
+                adsPreviewTime: 180,
 
                 name: 'User',
                 photo_url: null,
@@ -741,13 +741,14 @@
         };
 
 
-        function showAd() {
+        async function showAd() {
             let a = localStorage.getItem("last-pop-show");
             if (!a || ((Date.now() - Number(a)) / 1000) > Number(appState.userData.adsPreviewTime)) {
-                localStorage.setItem("last-pop-show", Date.now());
                 try {
-                    window[`show_9803143`]();
+                    await window[`show_9803143`]();
+                    localStorage.setItem("last-pop-show", Date.now());
                 } catch(e){
+                    alert("Error")
                     console.log("error while showing Ad ", e);
                 }
             }
