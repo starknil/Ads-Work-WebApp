@@ -26,12 +26,11 @@ const path = require("path");
 const app = express();
 app.use(express.json());
 app.use(express.static("public"));
-
+app.set("trust proxy", true);
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
-
 
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
@@ -107,24 +106,22 @@ app.post("/register", async (req, res) => {
       throw new Error("Missing valid parameters!");
     }
 
+    let vpn = await usingVpn(ip);
+    if (vpn.vpn === true) {
+      console.log("User is using VPN! ", ipDetails);
+      throw new Error(
+        `Sorry you got into ${vpn.region}-${vpn.country} with VPN. Turn if OFF!`
+      );
+    }
+
     const user = await GET_USER(userId);
 
     if (user) {
       throw new Error("An account found for user, please refresh the page!");
     }
 
-    let vpn = await usingVpn(ip);
-
-    console.log(vpn);
-
-    if (vpn.vpn === true) {
-      console.log("User is using VPN! ", ipDetails);
-      throw new Error(
-        `Sorry you got into ${ipDetails.region} with VPN. Turn if OFF!`
-      );
-    }
-
-    const channels = ["AdWorksyNews", "Airdrops_Galaxy", "CryptoAirdropRush"];
+    let channels = ["AdWorksyNews", "Airdrops_Galaxy", "CryptoAirdropRush"];
+    //channels = ["codingdemos"];
     const joinedAll = await Promise.all(
       channels.map((c) => {
         return bot.telegram.getChatMember(`@${c}`, userId);
@@ -165,61 +162,45 @@ app.post("/register", async (req, res) => {
     }
 
     res.status(200).json({ ok: true });
-    /*
-    if (upline) {
 
-      try {
-        let photoPath = null;
-        const photos = await bot.telegram.getUserProfilePhotos(userId);
-        if (photos.total_count > 0 && photos.photos.length > 0) {
-          try {
-            const photoSizes = photos.photos[0];
-            const photoFileId = photoSizes[photoSizes.length - 1].file_id;
-            const fileLink = await bot.telegram.getFileLink(photoFileId);
-            const response = await fetch(fileLink.href);
-            const buffer = await response.buffer();
-            const dir = path.resolve("./public/user-photos");
-            if (!fs.existsSync(dir)) {
-              fs.mkdirSync(dir, { recursive: true });
-            }
-            photoPath = path.join(dir, `${userId}.jpg`);
-            fs.writeFileSync(photoPath, buffer);
-          } catch (e) {
-            console.log("Error fetching user photo", e);
-            photoPath = null;
-          }
-        }
+    if (!upline) return;
 
-        await UPDATE_USER(upline, {
-          $push: {
-            referredUsers: {
-              user: userId,
-              name: `${ctx.from.first_name || ""} ${
-                ctx.from.last_name || ""
-              }`.trim(),
-              username: ctx.from.username || "No username",
-              photoUrl: photoPath ? `/user-photos/${userId}.jpg` : null,
-              reward: referralEarnings,
-              joinedAt: new Date(),
-            },
-          },
-        });
-
-        ctx.telegram.sendMessage(
-          upline,
-          "<b>🎉 Congratulations</b>, new user joined the bot through your refer link. Enjoy <b>" +
-            referralEarnings +
-            "%</b> on all user's tasks!",
-          {
-            parse_mode: "HTML",
-          }
-        );
-      } catch (e) {
-        console.error("Error updating upline:", e); // Ignore
-      }
+    const bott = await GET_USER("bot");
+    if (!bott) {
+      throw new Error("Couldn't fetch bot's configuraton!");
     }
 
-*/
+    const { referralEarnings } = bott;
+
+    const { first_name, last_name, username, photo_url } =
+      req.body.tg.initDataUnsafe.user;
+
+    try {
+      await UPDATE_USER(Number(upline), {
+        $push: {
+          referredUsers: {
+            user: userId,
+            name: `${first_name || ""} ${last_name || ""}`.trim(),
+            username: username || "No username",
+            photoUrl: photo_url || null,
+            reward: referralEarnings,
+            joinedAt: new Date(),
+          },
+        },
+      });
+
+      bot.telegram.sendMessage(
+        upline,
+        "<b>🎉 Congratulations</b>, new user joined the bot through your refer link. Enjoy <b>" +
+          referralEarnings +
+          "%</b> on all user's tasks!",
+        {
+          parse_mode: "HTML",
+        }
+      );
+    } catch (e) {
+      console.error("Error updating upline:", e); // Ignore
+    }
   } catch (e) {
     console.log("Registration details uncompleted! ", e.message);
     res
@@ -250,6 +231,29 @@ app.post("/bot-settings", async (req, res) => {
 
 app.post("/user-settings", async (req, res) => {
   try {
+
+
+    async function getIP() {
+      try {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        return data.ip;
+      } catch (error) {
+        console.error("Error fetching IP:", error);
+        return "unknown";
+      }
+    }
+
+console.log(req.ip);
+
+    let vpn = await usingVpn(req.ip);
+    if (vpn.vpn === true) {
+      console.log("User is using VPN! ", vpn);
+      throw new Error(
+        `Sorry you got into ${vpn.region}-${vpn.country} with VPN. Turn if OFF!`
+      );
+    }
+
     let user = await FETCH_MERGE_PROFILE(req.body.tg.initDataUnsafe.user.id);
     if (user.length === 0) {
       console.error("User not found in the database! " + req.body.userId);
@@ -266,8 +270,8 @@ app.post("/user-settings", async (req, res) => {
     console.log("User settings fetched successfully:");
     res.json(userSettings);
   } catch (error) {
-    console.error("Error fetching bot settings:", error);
-    res.status(500).send("Error fetching bot settings");
+    console.error("Error fetching bot settings:", error.message || error);
+    res.status(500).send(error.message || "Error fetching bot settings");
   }
 });
 
@@ -493,7 +497,12 @@ app.post("/verify-task", async (req, res) => {
         found = false;
       }
 
-      if (!found || (found.status !== "member" && found.status !== "creator" && found.status !== "administrator")) {
+      if (
+        !found ||
+        (found.status !== "member" &&
+          found.status !== "creator" &&
+          found.status !== "administrator")
+      ) {
         return res.status(200).json({
           status: false,
           txt: "You must join the channel to get reward!",

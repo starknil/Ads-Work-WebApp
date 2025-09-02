@@ -328,7 +328,6 @@
             const userId = user.id || 0;
             const firstName = user.first_name || 'User';
             const ref = tg.initDataUnsafe.start_param || null;
-            tg.ref;
 
             document.getElementById('welcome-title').textContent = `Welcome, ${firstName}!`;
 
@@ -360,6 +359,7 @@
 
                 try {
                     tg.ip = await getIP();
+                    tg.ref = ref;
 
                     const payload = {
                         tg

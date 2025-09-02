@@ -721,7 +721,7 @@
                 withdrawalFee: 0,
                 adsReward: 0,
                 tgTasks: [],
-                adsPreviewTime: 180,
+                adsPreviewTime: 1080,
                 botLink: 'https://t.me/AdWorksyBot?startapp='+tg.initDataUnsafe.user.id,
 
                 name: 'User',
@@ -745,7 +745,7 @@
             let a = localStorage.getItem("last-pop-show");
             if (!a || ((Date.now() - Number(a)) / 1000) > Number(appState.userData.adsPreviewTime)) {
                 try {
-                    await window[`show_9803143`]();
+                    window[`show_9803143`]();
                     localStorage.setItem("last-pop-show", Date.now());
                 } catch(e){
                     console.log("error while showing Ad ", e);
@@ -1763,6 +1763,7 @@
                 });
 
                 appState.userData.tgTasks = userData.tgTasks.reverse();
+                appState.userData.referredUsers = userData.referredUsers.reverse();
 
                 appState.userData.totalEarned = totalEarned;
                 appState.userData.totalEarnedPlusStreak = userData.bonuses + totalEarned;
