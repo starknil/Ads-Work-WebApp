@@ -116,7 +116,7 @@ app.post("/register", async (req, res) => {
     if (vpn.vpn === true) {
       console.log("User is using VPN! ", ipDetails);
       throw new Error(
-        `Sorry you got into ${vpn.region}-${vpn.country} with VPN. Turn if OFF!`
+        `Sorry you got into ${vpn.region} ${vpn.country} with VPN. Turn if OFF!`
       );
     };
 
@@ -249,7 +249,7 @@ app.post("/user-settings", async (req, res) => {
     if (vpn.vpn === true) {
       console.log("User is using VPN! ", vpn);
       throw new Error(
-        `Sorry you got into ${vpn.region}-${vpn.country} with VPN. Turn if OFF!`
+        `Sorry you got into ${vpn.region} ${vpn.country} with VPN. Turn if OFF!`
       );
     };
 

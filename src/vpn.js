@@ -1,36 +1,30 @@
 const axios = require("axios");
 
+
 const checkIfVPN = async (ip) => {
   try {
-    const { data } = await axios.get(`https://ipinfo.io/${ip}`);
-    
-    const org = data.org || "";
+    const { data } = await axios.get("https://proxycheck.io/v3/" + ip);
+    const { detections, location } = data[ip];
+    const { risk, hosting, ...otherFlags } = detections;
 
-    const vpnProviders = [
-      "Amazon", "Google", "Microsoft", "Azure", "DigitalOcean", "Hetzner",
-      "OVH", "Linode", "Vultr", "Leaseweb", "Alibaba", "Cloudflare", "Choopa",
-      "Kamatera", "Scaleway", "Contabo", "Hostwinds", "G-Core", "Tencent",
-      "UpCloud", "Netcup", "Packet", "OVHcloud", "Eonix", "Shinjiru"
-    ];
-
-    const isVpn = vpnProviders.some(name =>
-      org.toLowerCase().includes(name.toLowerCase())
-    );
-
+    let vpn = false;
+    if (Object.values(otherFlags).some((val) => val === true)) {
+      vpn = true;
+    } else if (hosting === true && Number(risk) > 25) {
+      vpn = true;
+    }
     return {
-      ip: data.ip,
-      city: data.city,
-      region: data.region,
-      country: data.country,
-      org,
-      vpn: isVpn,
-      reason: isVpn ? "Datacenter/Cloud provider detected" : "Likely residential ISP"
+      ip,
+      city: location.city_name,
+      region: location.region_name,
+      country: location.country_name,
+      vpn,
+      risk
     };
-
   } catch (e) {
     console.error("Error getting user info:", e.message);
-    return {};
+    return { ip, vpn: false };
   }
-}
+};
 
 module.exports = checkIfVPN;
