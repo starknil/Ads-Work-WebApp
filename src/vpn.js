@@ -1,6 +1,5 @@
 const axios = require("axios");
 
-
 const checkIfVPN = async (ip) => {
   try {
     const { data } = await axios.get("https://proxycheck.io/v3/" + ip);

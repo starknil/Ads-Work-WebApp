@@ -1,6 +1,8 @@
 require("dotenv").config();
 
+const bcrypt = require("bcrypt");
 const { MongoClient } = require("mongodb");
+const { useNewReplies } = require("telegraf/future");
 const { MONGO_URI, DB_NAME } = process.env;
 const client = new MongoClient(MONGO_URI);
 let db, users, adsTaskHistory, withdraws, tgTasks;
@@ -18,6 +20,8 @@ const connectDB = async () => {
     if (!(await users.findOne({ user: "bot" }))) {
       await users.insertOne({
         user: "bot",
+        username: "admin",
+        password: await bcrypt.hash("admin", 10),
         isActive: true,
         currency: "SHIB",
         referralEarnings: 15,
@@ -28,10 +32,13 @@ const connectDB = async () => {
         hourlyTaskLimit: 10,
         minimumWithdrawal: 10,
         withdrawalFee: 1,
+        gigaId: "",
+        adexiumId: "",
+        moneyTagId: "",
         createdAt: new Date(),
       });
       console.log("Bot settings initialized in the database.");
-    }
+    };
     /*
     await tgTasks.insertMany([
       {
@@ -69,13 +76,13 @@ const CREATE_USER = async (data) => {
   }
 };
 
-const GET_USER = async (user, f) => {
+const GET_USER = async (user, f, q) => {
   try {
     let result;
     if (f === "ip") {
       result = await users.findOne({ ip: f });
     } else {
-      result = await users.findOne({ user });
+      result = await users.findOne({ user }, { projection: q});
     }
     return result;
   } catch (e) {
@@ -204,12 +211,23 @@ const GET_TASK = async (taskId) => {
   }
 };
 
-const UPDATE_TASK = async (taskId, data) => {
+
+const EDIT_TASK = async (taskId, data) => {
   try {
     const result = await tgTasks.updateOne({ taskId }, data);
     return result.modifiedCount > 0;
   } catch (e) {
     throw new Error("Error updating task! " + e.message);
+  }
+};
+
+
+const DELETE_TASK = async (taskId) => {
+  try {
+    const result = await tgTasks.deleteOne({ taskId });
+    return result.modifiedCount > 0;
+  } catch (e) {
+    throw new Error("Error deleting task! " + e.message);
   }
 };
 
@@ -242,6 +260,111 @@ const UPDATE_WITHDRAWAL = async (withdrawId, data) => {
   }
 };
 
+
+
+
+// ADMIN PANEL 
+
+const FETCH_DASHBOARD = async () => {
+  try {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const [
+      totalUsers,
+      lastUser,
+      adsTaskCount,
+      tgTaskAgg,
+      lastAds,
+      lastTg,
+      withdrawAgg,
+      last10Withdraws,
+      todayUsers,
+      todayAdsTasks,
+      todayTgAgg,
+      todayWithdraws,
+      balanceAgg,
+    ] = await Promise.all([
+      users.countDocuments(),
+      users.find({}, { projection: { user: 1, createdAt: 1, name: 1, country: 1 } }).sort({ createdAt: -1 }).limit(1).toArray(),
+      adsTaskHistory.countDocuments(),
+      tgTasks.aggregate([
+        { $project: { count: { $size: "$performedBy" } } },
+        { $group: { _id: null, total: { $sum: "$count" } } },
+      ]).toArray(),
+      adsTaskHistory.find({}, { projection: { watchedAt: 1 } }).sort({ watchedAt: -1 }).limit(1).toArray(),
+      tgTasks.find({}, { projection: { createdAt: 1 } }).sort({ createdAt: -1 }).limit(1).toArray(),
+      withdraws.aggregate([{ $group: { _id: null, total: { $sum: "$amount" } } }]).toArray(),
+      withdraws.find({}).sort({ createdAt: -1 }).limit(10).toArray(),
+      users.countDocuments({ createdAt: { $gte: todayStart } }),
+      adsTaskHistory.countDocuments({ createdAt: { $gte: todayStart } }),
+      tgTasks.aggregate([
+        { $match: { createdAt: { $gte: todayStart } } },
+        { $project: { count: { $size: "$performedBy" } } },
+        { $group: { _id: null, total: { $sum: "$count" } } },
+      ]).toArray(),
+      withdraws.countDocuments({ createdAt: { $gte: todayStart } }),
+      users.aggregate([{ $group: { _id: null, total: { $sum: "$balance" } } }]).toArray()
+    ]);
+
+    const telegramTaskCount = tgTaskAgg[0]?.total || 0;
+    const totalTasks = adsTaskCount + telegramTaskCount;
+
+    const lastTaskCompleted = [lastAds[0]?.createdAt, lastTg[0]?.createdAt]
+      .filter(Boolean)
+      .sort()
+      .pop() || null;
+
+      const totalWithdraws = withdrawAgg[0]?.total || 0;
+
+
+
+    return {
+      totalUsers,
+      lastUser: lastUser[0] || null,
+      totalTasks,
+      lastTaskCompleted,
+      totalWithdraws,
+      last10Withdraws,
+      todayUsers,
+      todayTasks: todayAdsTasks + (todayTgAgg[0]?.total || 0),
+      todayWithdraws,
+      totalEarnings: (balanceAgg[0]?.total || 0) + todayWithdraws,
+    };
+  } catch (e) {
+    console.log("Error fetching dashboard stats", e);
+    return {};
+  }
+};
+
+const FETCH_ALL_USER = async () => {
+  try {
+    return users.find({ user: {
+      $ne: 'bot'
+    }}, { projection: {user: 1, balance: 1, username: 1, name: 1, photoUrl: 1  }}).toArray();
+  } catch (e) {
+    console.log("Error fetching all users ",e);
+  }
+}
+
+const FETCH_ALL_TASK = async () => {
+  try {
+    return tgTasks.find({}).toArray();
+  } catch (e) {
+    console.log("Error fetching all tasks ",e);
+  }
+}
+
+
+
+const FETCH_ALL_WITHDRAWAL = async () => {
+  try {
+    return withdraws.find({}).toArray();
+  } catch (e) {
+    console.log("Error fetching all withdrawals ",e);
+  }
+}
+
 module.exports = {
   connectDB,
   CREATE_USER,
@@ -251,8 +374,13 @@ module.exports = {
   ADD_ADS_WATCHED,
   ADD_TASK,
   GET_TASK,
-  UPDATE_TASK,
+  EDIT_TASK,
+  DELETE_TASK,
   ADD_WITHDRAWAL,
   GET_WITHDRAWAL,
   UPDATE_WITHDRAWAL,
+  FETCH_DASHBOARD,
+  FETCH_ALL_USER,
+  FETCH_ALL_TASK,
+  FETCH_ALL_WITHDRAWAL
 };

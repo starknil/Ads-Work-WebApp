@@ -1,0 +1,1143 @@
+<% function timeAgo(createdAt) { createdAt=new Date(createdAt); const now=new Date(); const diffMs=now - createdAt;
+  const seconds=Math.floor(diffMs / 1000); if (seconds < 60) return `${seconds} second${seconds !==1 ? "s" : "" } ago`;
+  const minutes=Math.floor(seconds / 60); if (minutes < 60) return `${minutes} minute${minutes !==1 ? "s" : "" } ago`;
+  const hours=Math.floor(minutes / 60); if (hours < 24) return `${hours} hour${hours !==1 ? "s" : "" } ago`; const
+  days=Math.floor(hours / 24); if (days < 30) return `${days} day${days !==1 ? "s" : "" } ago`; const
+  months=Math.floor(days / 30); if (months < 12) return `${months} month${months !==1 ? "s" : "" } ago`; const
+  years=Math.floor(months / 12); return `${years} year${years !==1 ? "s" : "" } ago`; }%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.min.js"></script>
+
+  <style>
+    /* Custom CSS for mobile sidebar animations */
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .overlay {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .overlay.open {
+      opacity: 1;
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            },
+            secondary: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              200: '#ddd6fe',
+              300: '#c4b5fd',
+              400: '#a78bfa',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              800: '#5b21b6',
+              900: '#4c1d95',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+
+</head>
+
+<body class="bg-gray-50">
+
+
+
+
+  <div class="flex h-screen overflow-hidden" x-data="{ open: false }">
+    <!-- Mobile sidebar -->
+    <div class="lg:hidden fixed inset-0 z-40" x-bind:class="{ 'pointer-events-none': !open, 'pointer-events-auto': open }">
+      <!-- Overlay -->
+      <div x-show="open" @click="open = false" class="fixed inset-0 bg-gray-600 bg-opacity-75 overlay" x-bind:class="{ 'open': open }"></div>
+
+      <!-- Sidebar -->
+      <div x-show="open" class="sidebar relative flex flex-col w-full h-full bg-gradient-to-b from-primary-900 to-primary-700" x-bind:class="{ 'open': open }">
+        <div class="flex items-center justify-between p-4 border-b border-primary-600">
+          <h1 class="text-2xl font-extrabold text-white tracking-tight">Admin Panel</h1>
+          <button @click="open = false" class="text-white hover:text-gray-200 focus:outline-none">
+            <i class="fas fa-times text-lg"></i>
+          </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto">
+          <div class="p-4 space-y-2">
+            <a href="?page=dashboard" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'dashboard' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-tachometer-alt mr-3 text-lg transition-transform"></i>
+              Dashboard
+            </a>
+            <a href="?page=users" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'users' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-users mr-3 text-lg transition-transform"></i>
+              Users List
+            </a>
+            <a href="?page=tg_tasks" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'tg_tasks' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-tasks mr-3 text-lg transition-transform"></i>
+              TG Tasks List
+            </a>
+            <a href="?page=withdraws" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'withdraws' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-history mr-3 text-lg transition-transform"></i>
+              Withdraw History
+            </a>
+            <a href="?page=settings" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'settings' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-cog mr-3 text-lg transition-transform"></i>
+              Settings
+            </a>
+          </div>
+        </nav>
+
+        <div class="p-4 border-t border-primary-600">
+          <div class="flex items-center">
+            <div class="ml-3">
+              <p class="text-sm font-medium text-white">Admin Username</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop sidebar -->
+    <div class="hidden lg:flex lg:flex-shrink-0">
+      <div class="flex flex-col w-72 bg-gradient-to-b from-primary-900 to-primary-700">
+        <div class="flex items-center justify-between h-16 flex-shrink-0 px-4 border-b border-primary-600">
+          <h1 class="text-2xl font-extrabold text-white tracking-tight">Admin Panel</h1>
+        </div>
+        <nav class="flex-1 overflow-y-auto">
+          <div class="p-4 space-y-2">
+            <a href="?page=dashboard" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'dashboard' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-tachometer-alt mr-3 text-lg transition-transform"></i>
+              Dashboard
+            </a>
+            <a href="?page=users" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'users' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-users mr-3 text-lg transition-transform"></i>
+              Users List
+            </a>
+            <a href="?page=tg_tasks" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'tg_tasks' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-tasks mr-3 text-lg transition-transform"></i>
+              TG Tasks List
+            </a>
+            <a href="?page=withdraws" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'withdraws' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-history mr-3 text-lg transition-transform"></i>
+              Withdraw History
+            </a>
+            <a href="?page=settings" class="flex items-center px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 <%=page === 'settings' ? 'bg-primary-600 border-l-4 border-primary-400 shadow-md' : 'hover:bg-primary-800 hover:shadow-sm'%>">
+              <i class="fas fa-cog mr-3 text-lg transition-transform"></i>
+              Settings
+            </a>
+          </div>
+        </nav>
+
+        <div class="p-4 border-t border-primary-600">
+          <div class="flex items-center">
+            <div class="ml-3">
+              <p class="text-sm font-medium text-white">Admin Username</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="flex-1 overflow-auto focus:outline-none">
+      <!-- Mobile header with hamburger button -->
+      <header class="lg:hidden bg-white shadow">
+        <div class="flex items-center justify-between px-4 py-3 sm:px-6">
+          <button @click="open = true" class="text-gray-500 hover:text-gray-600">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+          <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
+          <div class="flex items-center space-x-4">
+            <button class="text-gray-500 hover:text-gray-600">
+              <i class="fas fa-bell"></i>
+            </button>
+            <img class="w-8 h-8 rounded-full" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" />
+          </div>
+        </div>
+      </header>
+
+
+      <main class="p-4 sm:p-6">
+        <% if (page==="dashboard" ){ %>
+        <!-- DASHBOARD -->
+        <div id="dashboard">
+          <!-- Stats cards -->
+          <div class="grid grid-cols-1 gap-5 mt-6 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- Total Users -->
+            <div class="p-5 bg-white rounded-lg shadow transform transition-all hover:-translate-y-1 hover:shadow-lg">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="p-3 rounded-full bg-primary-100 text-primary-600">
+                    <i class="fas fa-users text-xl"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-500">Total Users</p>
+                    <p class="text-2xl font-bold text-gray-900">
+                      <%=totalUsers%>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="h-1 bg-gray-200 rounded-full">
+                  <div class="h-1 bg-primary-500 rounded-full" style="width: 100%"></div>
+                </div>
+                <p class="mt-1 text-xs text-gray-500">
+                  Last Signup: <%=lastUser.name%> (<%=timeAgo(lastUser.createdAt)%>) in <%=lastUser.country%>
+                </p>
+              </div>
+            </div>
+
+            <!-- Tasks Completed -->
+            <div class="p-5 bg-white rounded-lg shadow transform transition-all hover:-translate-y-1 hover:shadow-lg">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-tasks text-xl"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-500">Tasks Completed</p>
+                    <p class="text-2xl font-bold text-gray-900">
+                      <%=totalTasks%>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="h-1 bg-gray-200 rounded-full">
+                  <div class="w-6/6 h-1 bg-green-500 rounded-full"></div>
+                </div>
+                <% if (lastTaskCompleted){ %>
+                <p class="mt-1 text-xs text-gray-500">
+                  Last Task: (<%=timeAgo(lastTaskCompleted)%>)
+                </p>
+                <%}else{%>
+                <p class="mt-4 text-xs text-gray-400 italic">No tasks completed yet.</p>
+                <%}%>
+                  </div>
+                </div>
+
+                <!-- Total Withdraws -->
+                <div
+                  class="p-5 bg-white rounded-lg shadow transform transition-all hover:-translate-y-1 hover:shadow-lg">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-money-bill-wave text-xl"></i>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium text-gray-500">Total Withdraws</p>
+                        <p class="text-2xl font-bold text-gray-900">
+                          <%=totalWithdraws%> SHIB
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="h-1 bg-gray-200 rounded-full">
+              <div class="w-3/3 h-1 bg-yellow-500 rounded-full"></div>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Updated today</p>
+          </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Recent Activity and Quick Stats -->
+    <div class="grid grid-cols-1 gap-5 mt-6 lg:grid-cols-3">
+      <!-- Recent Withdraws -->
+
+
+      <div class="p-5 bg-white rounded-lg shadow lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-800">Recent Withdraw Requests</h2>
+          <a href="?page=withdraws" class="text-sm font-medium text-primary-600 hover:text-primary-700">
+            View All
+          </a>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                  User
+                </th>
+                <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                  Method
+                </th>
+                <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                  Amount
+                </th>
+                <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                  Status
+                </th>
+                <th class="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                  Date
+                </th>
+              </tr>
+            </thead>
+
+            <% const statusColors = { completed: 'text-green-800 bg-green-100' ,
+                        pending: 'text-yellow-800 bg-yellow-100' , failed: 'text-red-800 bg-red-100' }
+                        const statusClass = (status) => {
+                          return statusColors[status] || 'text-gray-800 bg-gray-100'
+                      }; %>
+
+            <%last10Withdraws.forEach(({ status, withdrawId, user, name, username, amount, address, photoUrl, createdAt })=> 
+                      {%>
+
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img class="w-8 h-8 rounded-full" src="<%=photoUrl%>" alt="User" />
+                    <div class="ml-3">
+                      <p class="text-sm font-medium text-gray-900">
+                        <%=name || user%>
+                      </p>
+                      <p class="text-xs text-gray-500">@<%=username || user%>
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img src="/shiba-inu.png" alt="logo" class="w-5 h-5 mr-2" />
+                    <span class="text-sm text-gray-900">SHIB (fee: 3000)</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  <%=amount%> SHIB
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full <%=statusClass(status)%>">
+                    <%=status%>
+                  </span>
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                  <%=timeAgo(createdAt)%>
+                </td>
+              </tr>
+            </tbody>
+            <%});%>
+          </table>
+        </div>
+      </div>
+
+
+
+      <!-- Quick Stats -->
+      <div class="p-5 bg-white rounded-lg shadow">
+        <h2 class="mb-4 text-lg font-semibold text-gray-800">Quick Stats</h2>
+        <div class="space-y-4">
+          <div>
+            <p class="text-sm font-medium text-gray-500">New Users Today</p>
+            <p class="text-2xl font-bold text-gray-900">
+              <%=todayUsers%>
+            </p>
+            <div class="mt-1 h-1 bg-gray-200 rounded-full">
+              <div class="w-1/2 h-1 bg-blue-500 rounded-full"></div>
+            </div>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Tasks Completed Today</p>
+            <p class="text-2xl font-bold text-gray-900">
+              <%=todayTasks%>
+            </p>
+            <div class="mt-1 h-1 bg-gray-200 rounded-full">
+              <div class="w-3/4 h-1 bg-green-500 rounded-full"></div>
+            </div>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Withdraw Requests Today</p>
+            <p class="text-2xl font-bold text-gray-900">
+              <%=todayWithdraws%>
+            </p>
+            <div class="mt-1 h-1 bg-gray-200 rounded-full">
+              <div class="w-1/3 h-1 bg-purple-500 rounded-full"></div>
+            </div>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Total Earnings</p>
+            <p class="text-2xl font-bold text-gray-900">
+              <%=totalEarnings%> SHIB
+            </p>
+            <div class="mt-1 h-1 bg-gray-200 rounded-full">
+              <div class="w-4/5 h-1 bg-yellow-500 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+  <%} else if ( page==="users" ){ %>
+
+
+
+  <!-- USERS LIST -->
+
+
+  <div id="users" class="p-4 bg-white rounded-lg shadow-md">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+      <h2 class="text-lg font-bold text-gray-800">Users Management</h2>
+      <form method="" action="" class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+        <!-- Search Input -->
+        <div class="relative flex-1 sm:w-48">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-search text-gray-400"></i>
+          </div>
+          <input type="text" id="userUserInput" name="search" placeholder="Search users with id..." value="" class="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+        </div>
+        <button id="searchUser" type="" class="px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700">
+          Search
+        </button>
+      </form>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              User
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Username
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Balance
+            </th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody id="user-list" class="bg-white divide-y divide-gray-200">
+
+          <% if (users.length === 0){ %>
+          <tr>
+            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+              No users found
+            </td>
+          </tr>
+          <%} else {%>
+
+          <%users.forEach(({user, name, username, photoUrl, balance}) => {%>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <img class="w-10 h-10 rounded-full" src="<%=photoUrl%>" alt="User profile" loading="lazy" />
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-gray-900"><%=name%></div>
+                  <div class="text-sm text-gray-500"><%=user%></div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@<%=username%></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%=balance%> SHIB</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <button onclick="openEditModal('<%=user%>', '<%=username%>', '<%=balance%>')" class="text-primary-600 hover:text-primary-900 mr-3">
+                <i class="fas fa-edit"></i>
+                Edit
+              </button>
+            </td>
+          </tr>
+          <%})%>
+          <%}%>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+      <!-- Edit User Modal -->
+    <div id="editUserModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-40 p-4">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-sm max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white p-4 border-b flex items-center justify-between">
+                <h3 class="text-base font-bold text-gray-800">Edit User Balance</h3>
+                <button onclick="closeEditUserModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editUserForm" action="/admin/update-balance" method="POST" class="p-4">
+                <input type="hidden" name="user_id" id="editUserId">
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">User</label>
+                    <p id="editUserName" class="text-sm text-gray-900">dhdh</p>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="balance" class="block text-sm font-medium text-gray-700 mb-1">Balance</label>
+                    <input type="number" id="balance" name="balance" step="0.01" min="0" required
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border">
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeEditUserModal()"
+                        class="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700">
+                        Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+      <script>
+
+          function openEditModal(userId, userName, balance) {
+            const modal = document.getElementById('editUserModal');
+            const userIdInput = document.getElementById('editUserId');
+            const userNameDisplay = document.getElementById('editUserName');
+            const balanceInput = document.getElementById('balance');
+            userIdInput.value = userId;
+            userNameDisplay.textContent = userName;
+            balanceInput.value = balance;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditUserModal() {
+            const modal = document.getElementById('editUserModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        const allUsers = JSON.parse('<%-JSON.stringify(users)%>');
+      </script>
+      <script src="/admin/js/u.js"></script>
+
+
+
+
+          <%} else if (page==="tg_tasks" ){ %>
+
+
+
+
+          <!-- TG TASKS -->
+          <div id="tg_tasks" class="p-4 bg-white rounded-lg shadow-md">
+            <!-- Search and Add Button -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
+              <h2 class="text-lg font-bold text-gray-800">Tasks</h2>
+              <div class="flex gap-3">
+                <!-- Search Form -->
+                <form method="" action="" class="flex items-center">
+                  <input id="findTaskInput" type="text" name="search" placeholder="Search by username..." value="" class="w-full sm:w-64 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                  <button id="findTaskBtn" class="ml-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 text-sm font-medium">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <button onclick="openAddModal('add')" class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 text-sm font-medium">
+                  <i class="fas fa-plus mr-1"></i>
+                  Add Task
+                </button>
+              </div>
+            </div>
+
+            <!-- Tasks Table -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ID
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Link
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Earning
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Created At
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="task-list" class="bg-white divide-y divide-gray-200">
+
+
+                  <% if (tasks.length === 0){ %>
+                  <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">No tasks found
+                  </td>
+                  <%} else { %>
+
+                  <% tasks.reverse().forEach(({taskId, username, reward, type, createdAt}) => { %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%=taskId%></td>
+
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%=type === 'tg'? 'Telegram' : 'Website'%></td>
+
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <%=username%>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%=reward%></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%=timeAgo(createdAt)%></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button onclick="openAddModal('edit', '<%=taskId%>' ,'<%=username%>', '<%=reward%>', '<%=type%>')" class="text-primary-600 hover:text-primary-900 mr-3">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                      </button>
+                      <a href="/admin/task?type=delete&id=<%=taskId%>" onclick="return confirm('Are you sure you want to delete this task?')" class="text-red-600 hover:text-red-900">
+                        <i class="fas fa-trash"></i>
+                        Delete
+                      </a>
+                    </td>
+                  </tr>
+                  <%});%>
+                  <%}%>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+
+    <!-- Task Modal -->
+    <div
+      id="addModal"
+      class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-40 p-4"
+    >
+      <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+        <div class="sticky top-0 bg-white p-4 border-b flex items-center justify-between">
+          <h3 class="text-lg font-bold text-gray-800">Add Task</h3>
+          <button onclick="closeAddModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="task_action" method="POST" action="" class="p-4">
+          <div class="mb-4">
+            <input type="hidden" name="add_id" id="add_id">
+            <label for="add_username" class="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
+            <input
+              type="text"
+              id="add_username"
+              name="username"
+              required
+              class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="add_reward" class="block text-sm font-medium text-gray-700 mb-1">
+              Reward
+            </label>
+            <input
+              type="number"
+              id="add_reward"
+              name="reward"
+              step="0.01"
+              min="0"
+              required
+              class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border"
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="add_type" class="block text-sm font-medium text-gray-700 mb-1">
+              Task Type
+            </label>
+            <select
+              id="add_type"
+              name="type"
+              required
+              class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border">
+            <option value="tg">Telegram</option>
+            <option value="web">Website</option>
+            </select>
+          </div>
+
+          <div class="flex justify-end space-x-2">
+            <button
+              type="button"
+              onclick="closeAddModal()"
+              class="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+            >
+              Cancel
+            </button>
+            <button
+            id="task_which"
+              type="submit"
+              class="px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700"
+            >
+              Add Task
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <script>
+
+      function openAddModal(which, id, username, reward, type) {
+        if (which === 'add'){
+          document.getElementById('task_action').action = '/admin/task?type=create';
+         document.getElementById('add_id').value = '';
+        document.getElementById('add_username').value = '';
+        document.getElementById('add_reward').value = '';
+        document.getElementById('task_which').textContent = "Add Task";
+        } else {
+          document.getElementById('task_action').action = '/admin/task?type=edit';
+        document.getElementById('add_id').value = id;
+        document.getElementById('add_username').value = username;
+        document.getElementById('add_reward').value = reward;
+        document.getElementById('add_type').value = type;
+        document.getElementById('task_which').textContent = "Edit Task";
+        }
+
+        document.getElementById('addModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+      }
+
+      function closeAddModal() {
+        document.getElementById('addModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+      }
+
+
+      const allTasks = JSON.parse('<%-JSON.stringify(tasks)%>');
+    </script>
+                  <script src="/admin/js/t.js"></script>
+
+
+
+
+                  <%} else if (page==="withdraws" ){ %>
+
+
+                  <!-- WITHDRAWS -->
+                  <div id="withdraws" class="p-4 bg-white rounded-lg shadow-md">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+                      <h2 class="text-lg font-bold text-gray-800">Withdraw Requests</h2>
+
+                      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <!-- Search Input -->
+                        <div class="relative flex-1 sm:w-48">
+                          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                          </div>
+                          <input id="searchWithdrawInput" type="text" name="search" placeholder="Search withdrawals with id or status..." value="" class="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                        </div>
+                        <button type="submit" id="searchWithdrawBtn" class="px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700">
+                          Search
+                        </button>
+                      </div>
+                    </div>
+
+                    <div id="withdraws-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6" id="requestsContainer">
+
+                      <% if (withdraws.length === 0){ %>
+
+                      <p class="col-span-full text-gray-600 text-center">No withdrawal requests found.</p>
+                      <%} else {%>
+
+                      <%  withdraws.reverse().forEach(({ withdrawId, user, amount, address, status, photoUrl, createdAt }) => { %>
+
+                      <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col justify-between">
+                        <div class="flex justify-between items-start mb-4">
+
+                          <div class="flex items-center space-x-4 min-w-0">
+                            <img class="w-12 h-12 rounded-full border border-gray-200 flex-shrink-0" src="<%=photoUrl%>" alt="User" />
+                            <div class="min-w-0">
+                              <p class="text-sm font-semibold text-gray-900 truncate">ID: <%=withdrawId%></p>
+                              <p class="text-xs text-gray-500">User: <%=user%></p>
+                            </div>
+                          </div>
+
+                          <button onclick="openModal('<%=withdrawId%>');" class="text-xs font-semibold text-primary-600 hover:text-primary-800 transition-colors duration-200 bg-primary-50 px-3 py-1 rounded whitespace-nowrap">
+                            Update status
+                          </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm text-gray-700">
+                          <div class="flex items-center space-x-2 overflow-hidden">
+                            <div class="flex items-center space-x-1 truncate">
+                              <img src="/shiba-inu.png" alt="logo" class="w-5 h-5 flex-shrink-0" />
+                              <p class="font-medium truncate">Transfer</p>
+                            </div>
+                          </div>
+
+                          <div class="flex items-center space-x-2">
+                            <i class="fas fa-money-bill-wave text-primary-500 text-base"></i>
+                            <p class="font-semibold text-gray-900"><%=amount%> SHIB</p>
+                          </div>
+
+                          <div class="flex items-center space-x-2 overflow-hidden">
+                            <i class="fas fa-map-marker-alt text-primary-500 text-base"></i>
+                            <p class="truncate" title="">
+                              <%=address%>
+                            </p>
+                            <button onclick="copyToClipboard('<%=address%>', this);" class="relative text-primary-500 hover:text-primary-700" title="Copy">
+                              <i class="fas fa-copy"></i>
+                            </button>
+                          </div>
+                          <div class="flex flex-col items-end justify-between">
+                            <span class="px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap <%= status === 'pending' ? 'text-yellow-800 bg-yellow-100' : status === 'completed' ? 'text-green-800 bg-green-100' : 'text-red-800 bg-red-100'%>">
+                              <%=status%>
+                            </span>
+                            <p class="text-xs text-gray-500 mt-1"><%=timeAgo(createdAt)%></p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <% }); %>
+
+                      <%}%>
+            </div>
+          </div>
+
+          <div id="withdrawPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">Change Withdraw Status</h2>
+    
+    <form class="space-y-4" method="POST" action="/admin/change-withdrawal-status">
+
+      <input name="withdrawStatusId" type="text" id="withdrawStatusId" class="hidden" value="">
+      <div>
+        <label for="withdrawStatus" class="block text-sm font-medium text-gray-700 mb-1">
+          Status
+        </label>
+        <select 
+          name="status" 
+          id="withdrawStatus" 
+          class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
+        >
+          <option value="completed">Completed</option>
+          <option value="pending">Pending</option>
+          <option value="failed">Failed</option>
+        </select>
+      </div>
+      
+      <div class="flex justify-end space-x-2">
+        <button 
+          type="button" 
+          class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800"
+          onclick="document.getElementById('withdrawPopup').classList.add('hidden');"
+        >
+          Cancel
+        </button>
+        <button onclick="document.getElementById('withdrawPopup').classList.add('hidden');"
+          type="submit" 
+          class="px-4 py-2 rounded-md bg-primary-600 hover:bg-primary-700 text-white"
+        >
+          Update
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+      <script>
+      const allWithdraws = JSON.parse('<%-JSON.stringify(withdraws)%>');
+
+
+      function openModal(id){
+        document.getElementById('withdrawStatusId').value = id;
+        document.getElementById('withdrawPopup').classList.remove('hidden');
+      };
+
+                function copyToClipboard(text, button) {
+  navigator.clipboard.writeText(text).then(() => {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'fixed z-50 bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap';
+    tooltip.textContent = 'Copied!';
+    document.body.appendChild(tooltip);
+    const rect = button.getBoundingClientRect();
+    tooltip.style.left = `${rect.left + rect.width / 2}px`;
+    tooltip.style.top = `${rect.top - 30}px`;
+    tooltip.style.transform = 'translateX(-50%)';
+    setTimeout(() => tooltip.remove(), 2000);
+  }).catch(err => {
+    console.error('Failed to copy: ', err);
+  });
+};
+
+                
+                      </script>
+                      <script src="/admin/js/w.js"></script>
+                      <%} else if (page==="settings" ){ %>
+                      <!-- SETTINGS -->
+                      <div id="settings" class="p-4 bg-white rounded-lg shadow-md">
+                        <h2 class="text-lg font-bold text-gray-800 mb-6">System Settings</h2>
+
+                        <form method="POST" action="/admin/settings">
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Ad Settings -->
+                            <div class="space-y-4">
+                              <div>
+                                <label for="adsReward" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Earning Per Ad
+                                </label>
+                                <input value="<%=adsReward%>" type="number" id="adsReward" name="adsReward" step="0.0001" min="0" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div>
+                                <label for="dailyTaskLimit" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Daily Ads Limit
+                                </label>
+                                <input value="<%=dailyTaskLimit%>" type="number" id="dailyTaskLimit" name="dailyTaskLimit" min="1" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div>
+                                <label for="hourlyTaskLimit" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Hourly Ads Limit
+                                </label>
+                                <input value="<%=hourlyTaskLimit%>" type="number" id="hourlyTaskLimit" name="hourlyTaskLimit" min="1" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+                            </div>
+
+                            <!-- Currency Settings -->
+                            <div class="space-y-4">
+                              <div>
+                                <label for="currency" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Currency
+                                </label>
+                                <input value="<%=currency%>" type="text" id="currency" name="currency" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div>
+                                <label for="referralEarnings" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Referral Commission (%)
+                                </label>
+                                <input value="<%=referralEarnings%>" type="number" id="referralEarnings" name="referralEarnings" min="1" max="50" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div>
+                                <label for="referralDirectBonus" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Referral Direct Bonus
+                                </label>
+                                <input value="<%=referralDirectBonus%>" type="number" id="referralDirectBonus" name="referralDirectBonus" min="1" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                            </div>
+
+                            <!-- Advanced Settings -->
+                            <div class="space-y-4 md:col-span-2">
+                              <div>
+                                <label for="daysEarning" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Daily Bonus (Comma separated values)
+                                </label>
+                                <input value="<%=daysEarning%>" type="text" id="daysEarning" name="daysEarning" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border tagify-bonus" />
+                              </div>
+
+                              <!--<div>
+                                <label for="admins" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Admin IDs (Comma separated)
+                                </label>
+                                <input type="text" id="admins" name="admins" value="" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border tagify-admins" />
+                              </div>
+
+                              <div>
+                                <label for="current_network" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Current Networks
+                                </label>
+                                <select id="current_network" name="current_network[]" multiple class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border h-28">
+                                  <option value="monetag">Monetag</option>
+                                  <option value="gigapub">Gigapub</option>
+                                  <option value="adexium">Adexium</option>
+                                </select>
+                              </div>-->
+
+
+                              <h2 class="text-lg font-bold text-gray-800 mb-6">Ads Providers Ids</h2>
+
+                              <div>
+                                <label for="adexiumId" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Adexium Widget ID
+                                </label>
+                                <input value="<%=adexiumId%>" type="text" id="adexiumId" name="adexiumId" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div>
+                                <label for="moneyTagId" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Monetag ID
+                                </label>
+                                <input value="<%=moneyTagId%>" type="text" id="moneyTagId" name="moneyTagId" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div>
+                                <label for="gigaId" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Gigapub ID
+                                </label>
+                                <input value="<%=gigaId%>" type="text" id="gigaId" name="gigaId" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border tagify-gigapub" />
+                              </div>
+
+                              <!--<div>
+                                <label for="task_time_deference" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Task Time Difference (seconds)
+                                </label>
+                                <input type="number" id="task_time_deference" name="task_time_deference" min="0" value="" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>-->
+                            </div>
+
+                             <!--<div class="space-y-4">
+
+                              <h2 class="text-lg font-bold text-gray-800 mb-5">Admin Login Credentials</h2>
+
+                              <div>
+                                <label for="username" class="block text-sm font-medium text-gray-700 mb-1 mt-4">
+                                  Admin Username
+                                </label>
+                                <input value="<%=username%>" type="text" id="username" name="username" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div class="mt-4">
+                                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Admin Password
+                                </label>
+                                <input type="text" id="password" name="password" value="" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+                            </div>-->
+
+
+
+                             <div class="space-y-4">
+
+                              <h2 class="text-lg font-bold text-gray-800 mb-5">Withdrawal Settings</h2>
+
+                              <div>
+                                <label for="minimumWithdrawal" class="block text-sm font-medium text-gray-700 mb-1 mt-4">
+                                  Minimum Withdrawal
+                                </label>
+                                <input value="<%=minimumWithdrawal%>" type="text" id="minimumWithdrawal" name="minimumWithdrawal" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div class="mt-4">
+                                <label for="withdrawalFee" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Withdrawal Fee
+                                </label>
+                                <input type="text" id="withdrawalFee" name="withdrawalFee" value="<%=withdrawalFee%>" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+                            </div>
+
+
+
+                            <!-- Ad Settings -->
+                            <div class="space-y-4">
+
+                              <h2 class="text-lg font-bold text-gray-800 mb-5">Admin Login Credentials</h2>
+
+                              <div>
+                                <label for="username" class="block text-sm font-medium text-gray-700 mb-1 mt-4">
+                                  Admin Username
+                                </label>
+                                <input value="<%=username%>" type="text" id="username" name="username" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+
+                              <div class="mt-4">
+                                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                                  Admin Password
+                                </label>
+                                <input type="text" id="password" name="password" value="" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm p-2 border" />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="mt-6 flex justify-end">
+                            <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                              Save Settings
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                      <script>
+                        // Daily Bonus Tagify (for comma-separated values)
+                        new Tagify(document.querySelector('.tagify-bonus'), {
+                          pattern: /^\d+$/,
+                          delimiters: ",| ",
+                          keepInvalidTags: false,
+                          dropdown: {
+                            enabled: 0 // No dropdown for bonus values
+                          },
+                          callbacks: {
+                            invalid: function(tag) {
+                              alert("Only numbers and commas allowed for bonus values");
+                            }
+                          }
+                        });
+
+                        // Admins Tagify (for admin IDs)
+                        new Tagify(document.querySelector('.tagify-admins'), {
+                          pattern: /^\d+$/,
+                          delimiters: ",| ",
+                          keepInvalidTags: false,
+                          dropdown: {
+                            enabled: 0 // No dropdown for admin IDs
+                          },
+                          callbacks: {
+                            invalid: function(tag) {
+                              alert("Only numeric admin IDs allowed");
+                            }
+                          }
+                        });
+                      </script>
+                      <%}%>
+        </main>
+      </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+
+    <script>
+      
+    </script>
+</body>
+</html>

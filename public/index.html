@@ -656,7 +656,7 @@
     <script>
 
         let tg = window.Telegram.WebApp;
-        /*
+        
                 tg = {
                     ...tg,
                     initData: "query_id=AAF3S49XAwAAAHdLj1e5NnX3&user=%7B%22id%22%3A7911459703%2C%22first_name%22%3A%22Kingstar%20%F0%9F%AB%86%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22gill728%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FUlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg%22%7D&auth_date=1755720767&signature=STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw&hash=c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41",
@@ -676,7 +676,7 @@
                         hash: 'c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41'
                     }
                 };
-        */
+        
         const toastifyConfig = {
             duration: 3000,
             gravity: 'top',
@@ -700,9 +700,12 @@
                 minimumWithdrawal: 0,
                 withdrawalFee: 0,
                 adsReward: 0,
+                gigaId: '',
+                adexiumId: '',
+                moneyTagId: '',
                 tgTasks: [],
-                adsPreviewTime: 180,
-                botLink: 'https://t.me/AdWorksyBot?startapp=' + tg.initDataUnsafe.user.id,
+                adsPreviewTime: 2,
+                botLink: 'https://t.me/AdWorksyBot?startapp=' + tg.initDataUnsafe?.user?.id,
 
                 name: 'User',
                 photo_url: null,
@@ -725,7 +728,8 @@
             let a = localStorage.getItem("last-pop-show");
             if (!a || ((Date.now() - Number(a)) / 1000) > Number(appState.userData.adsPreviewTime)) {
                 try {
-                    window[`show_9803143`]();
+                    const moneyTagId = appState.userData.moneyTagId;
+                    window[`show_${moneyTagId}`]();
                     localStorage.setItem("last-pop-show", Date.now());
                 } catch (e) {
                     console.log("error while showing Ad ", e);
@@ -1521,7 +1525,7 @@
                 adexium: 2,
                 richAds: 2
             }
-            const moneyTagId = 9803143;
+            const moneyTagId = appState.userData.moneyTagId;
 
             if (appState.userData.hourlyTasks === 0) {
                 resetShowedAds();
@@ -1575,7 +1579,7 @@
 
                 } else if (provider === 'moneyTag') {
 
-                    const aa = await window[`show_9798836`]();
+                    const aa = await window[`show_${moneyTagId}`]();
                     console.log("MoneyTag result: ", aa);
                     if (aa) {
                         watched = true;

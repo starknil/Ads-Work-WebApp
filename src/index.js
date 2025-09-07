@@ -18,14 +18,18 @@ const usingVpn = require("./vpn.js");
 const express = require("express");
 const crypto = require("crypto");
 const axios = require("axios");
-
+const adminRoute = require("../src/admin-route.js");
 const fs = require("fs");
 const fetch = require("node-fetch");
 const path = require("path");
 
 const app = express();
+
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "../public/admin/views"));
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "../public")));
 app.set("trust proxy", true);
 
 process.on("unhandledRejection", (reason, promise) => {
@@ -37,21 +41,11 @@ process.on("uncaughtException", (err) => {
 });
 
 
-app.get("/", (req, res) => {
-  return res.sendFile(__dirname + "/public/index.html");
-});
-
-
-app.get("/register.html", (req, res) => {
-  return res.sendFile(__dirname + "/public/register.html");
-});
-
+app.use("/admin", adminRoute);
 
 app.use((req, res, next) => {
   const tg = req.body?.tg;
-
   if (!tg) {
-    console.error("No TG details found in request body");
     return res
       .status(400)
       .send("Invalid request: No valid tg datas in request body!");
@@ -133,7 +127,7 @@ app.post("/register", async (req, res) => {
     }
 
     let channels = ["AdWorksyNews", "Airdrops_Galaxy", "CryptoAirdropRush"];
-    //channels = ["codingdemos"];
+    channels = ["codingdemos"];
     const joinedAll = await Promise.all(
       channels.map((c) => {
         return bot.telegram.getChatMember(`@${c}`, userId);
@@ -151,8 +145,15 @@ app.post("/register", async (req, res) => {
     const ref = req.body.tg.ref;
     const upline = !isNaN(ref) && ref > 8 ? ref : null;
 
+    const { first_name, last_name, username, photo_url } =
+      req.body.tg.initDataUnsafe.user;
+    const name = `${first_name || ""} ${last_name || ""}`.trim();
+
     uu = {
       user: userId,
+      name,
+      username: username || "No username",
+      photoUrl: photo_url,
       balance: 0,
       withdrawn: 0,
       upline,
@@ -164,6 +165,7 @@ app.post("/register", async (req, res) => {
       lastCheckin: null,
       tgTasksDone: 0,
       ip,
+      country: vpn.country,
       createdAt: new Date(),
     };
 
@@ -185,15 +187,12 @@ app.post("/register", async (req, res) => {
 
     const { referralEarnings } = bott;
 
-    const { first_name, last_name, username, photo_url } =
-      req.body.tg.initDataUnsafe.user;
-
     try {
       await UPDATE_USER(Number(upline), {
         $push: {
           referredUsers: {
             user: userId,
-            name: `${first_name || ""} ${last_name || ""}`.trim(),
+            name,
             username: username || "No username",
             photoUrl: photo_url || null,
             reward: referralEarnings,
@@ -234,6 +233,7 @@ app.post("/bot-settings", async (req, res) => {
     delete botSettings.user;
     delete botSettings.createdAt;
     delete botSettings.isActive;
+    delete botSettings.password;
 
     res.json(botSettings);
   } catch (error) {
@@ -590,6 +590,9 @@ app.post("/request-withdraw", async (req, res) => {
       status: "pending",
       withdrawId,
       user: userId,
+      name: user.name,
+      username: user.username,
+      photoUrl: user.photoUrl,
       amount: Number(amount),
       address,
       createdAt: new Date(),
@@ -607,7 +610,7 @@ app.post("/request-withdraw", async (req, res) => {
         parse_mode: "HTML",
       }
     );
-
+/*
     await bot.telegram.sendMessage(
       ADMIN,
       `<b>💸 New withdrawal request:</b>\n\n<b>User:</b> ${userId}\nAmount: <b>${amount} ${bott.currency}\nAddress:</b> ${address}\n<b>Withdraw ID:</b> ${withdrawId}`,
@@ -631,7 +634,7 @@ app.post("/request-withdraw", async (req, res) => {
         },
       }
     );
-
+*/
     return res.status(200).json({
       status: true,
       message: `Withdrawal request for ${amount} ${bott.currency} to ${address} has been submitted.`,

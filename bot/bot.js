@@ -91,8 +91,6 @@ bot.action(/\/markwith_(.+)_(.+)/, async (ctx) => {
 
   const withT = await GET_WITHDRAWAL(id);
 
-  console.log(withT);
-
   if (!withT) {
     return ctx.reply("⛔️ Withdrawal with ID: " + id + " not found!");
   }
