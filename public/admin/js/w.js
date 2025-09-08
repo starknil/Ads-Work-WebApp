@@ -22,18 +22,18 @@ const searchWithdraws = (e) => {
     news.forEach(({ withdrawId, user, amount, address, status, photoUrl, createdAt }) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-       <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col justify-between">
+       <div class="border border-purple-600/20 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col justify-between">
                 <div class="flex justify-between items-start mb-4">
   
                   <div class="flex items-center space-x-4 min-w-0">
                     <img class="w-12 h-12 rounded-full border border-gray-200 flex-shrink-0" src="${photoUrl}" alt="User" />
                     <div class="min-w-0">
-                      <p class="text-sm font-semibold text-gray-900 truncate">ID: ${withdrawId}</p></p>
-                      <p class="text-xs text-gray-500">User:${user}</p>
+                      <p class="text-sm font-semibold text-gray-400 truncate">ID: ${withdrawId}</p></p>
+                      <p class="text-xs text-gray-400">User:${user}</p>
                     </div>
                   </div>
 
-                  <button onclick="openModal('${withdrawId}')" class="text-xs font-semibold text-primary-600 hover:text-primary-800 transition-colors duration-200 bg-primary-50 px-3 py-1 rounded whitespace-nowrap">
+                  <button onclick="openModal('${withdrawId}')" class="text-xs font-semibold text-purple-600 hover:text-purple-800 transition-colors duration-200 bg-purple-50 px-3 py-1 rounded whitespace-nowrap">
                     Update
                   </button>
                 </div>
@@ -42,21 +42,21 @@ const searchWithdraws = (e) => {
                   <div class="flex items-center space-x-2 overflow-hidden">
                     <div class="flex items-center space-x-1 truncate">
                       <img src="/shiba-inu.png" alt="logo" class="w-5 h-5 flex-shrink-0" />
-                      <p class="font-medium truncate">Transfer</p>
+                      <p class="font-medium truncate text-gray-400">Transfer</p>
                     </div>
                   </div>
 
                   <div class="flex items-center space-x-2">
-                    <i class="fas fa-money-bill-wave text-primary-500 text-base"></i>
-                    <p class="font-semibold text-gray-900">${amount} SHIB</p>
+                    <i class="fas fa-money-bill-wave text-purple-400 text-base"></i>
+                    <p class="font-semibold text-gray-400">${amount} SHIB</p>
                   </div>
 
                   <div class="flex items-center space-x-2 overflow-hidden">
-                    <i class="fas fa-map-marker-alt text-primary-500 text-base"></i>
-                    <p class="truncate" title="">
+                    <i class="fas fa-map-marker-alt text-purple-400 text-base"></i>
+                    <p class="truncate text-gray-400" title="">
                       ${address}
                     </p>
-                    <button onclick="copyToClipboard('${address}',this)" class="text-primary-500 hover:text-primary-700" title="Copy">
+                    <button onclick="copyToClipboard('${address}',this)" class="text-purple-500 hover:text-purple-700" title="Copy">
                       <i class="fas fa-copy"></i>
                     </button>
                   </div>

@@ -26,7 +26,7 @@ const connectDB = async () => {
         currency: "SHIB",
         referralEarnings: 15,
         referralDirectBonus: 500,
-        daysEarning: "150,20,25,100,1000,5000,10000,20000".split(","),
+        daysEarning: [150,20,25,100,1000,5000,10000,20000],
         adsReward: 5,
         dailyTaskLimit: 240,
         hourlyTaskLimit: 10,
@@ -35,6 +35,12 @@ const connectDB = async () => {
         gigaId: "",
         adexiumId: "",
         moneyTagId: "",
+        gigaLimit: 0,
+        adexiumLimit: 0,
+        richAdsLimit: 0,
+        adexTraLimit: 0,
+        directLinks: [],
+        directLinkCooldown: 3600,
         createdAt: new Date(),
       });
       console.log("Bot settings initialized in the database.");
@@ -286,7 +292,7 @@ const FETCH_DASHBOARD = async () => {
       balanceAgg,
     ] = await Promise.all([
       users.countDocuments(),
-      users.find({}, { projection: { user: 1, createdAt: 1, name: 1, country: 1 } }).sort({ createdAt: -1 }).limit(1).toArray(),
+      users.find({ user: {$ne: 'bot'}}, { projection: { user: 1, createdAt: 1, name: 1, country: 1 } }).sort({ createdAt: -1 }).limit(1).toArray(),
       adsTaskHistory.countDocuments(),
       tgTasks.aggregate([
         { $project: { count: { $size: "$performedBy" } } },
@@ -320,7 +326,7 @@ const FETCH_DASHBOARD = async () => {
 
 
     return {
-      totalUsers,
+      totalUsers: totalUsers - 1,
       lastUser: lastUser[0] || null,
       totalTasks,
       lastTaskCompleted,

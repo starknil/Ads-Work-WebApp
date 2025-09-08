@@ -19,18 +19,19 @@ function timeAgo(createdAt) {
 const searchUser = (e) => {
   e.preventDefault();
   const renderUsers = (userBody, news) => {
-    news.forEach(({ taskId, username, reward, createdAt }) => {
+    news.forEach(({ taskId, type, username, reward, createdAt }) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
            <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${taskId}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${type === 'tg'? 'Telegram' : 'Website'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">
                       ${username}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${reward}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timeAgo(createdAt)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button onclick="openEditModal()" class="text-primary-600 hover:text-primary-900 mr-3">
+                      <button onclick="openEditModal()" class="text-purple-600 hover:text-purple-900 mr-3">
                         <i class="fas fa-edit"></i>
                         Edit
                       </button>
@@ -48,7 +49,7 @@ const searchUser = (e) => {
   userBody.innerHTML = '';
   const input = document.getElementById('findTaskInput').value;
   if (!input || input === '') {
-    return renderUsers(userBody, allUsers);
+    return renderUsers(userBody, allTasks);
   }
   const news = allTasks.filter((u) => u.taskId.toString().startsWith(input) || u.username.toString().startsWith(input));
   if (news.length === 0) {

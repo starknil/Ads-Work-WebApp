@@ -1,878 +1,993 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-    <link rel="shortcut icon" href="/shiba-inu.png" type="image/png">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <link rel="shortcut icon" href="/shiba-inu.png" type="image/png" />
     <title>Task Rewards Bot</title>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.js"></script>
 
-    <script type="text/javascript" src="https://cdn.tgads.space/assets/js/tg-ads-co-widget.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.tgads.space/assets/js/tg-ads-co-widget.min.js"
+    ></script>
 
     <script src="https://cdn.giga.pub/script/offer/loader/loader.js"></script>
 
-    <script src="https://ad.gigapub.tech/script?id=1897"></script>
-    <script src='//libtl.com/sdk.js' data-zone='9803143' data-sdk='show_9803143'></script>
-    <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+    <script src="https://ad.gigapub.tech/script?id=2565"></script>
+    <script src="//libtl.com/sdk.js" data-zone="9803143" data-sdk="show_9803143"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"
+    ></script>
     <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-    <script async src="https://partner.adextra.io/jt/57ee3d83dda0a7fd3f29e0859bbc6d8bc4046103.js"></script>
+
+    <script
+      async
+      src="https://partner.adextra.io/jt/57ee3d83dda0a7fd3f29e0859bbc6d8bc4046103.js"
+    ></script>
 
     <style>
-        html,
-        body,
-        #app {
-            height: 100%;
-            overflow: hidden;
+      html,
+      body,
+      #app {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .active-tab {
+        background-color: #eff6ff;
+        color: #3b82f6;
+      }
+
+      .task-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .pulsee {
+        animation: pulsee 1.5s infinite;
+      }
+
+      @keyframes pulsee {
+        0%,
+        100% {
+          transform: scale(1);
         }
 
-        .active-tab {
-            background-color: #EFF6FF;
-            color: #3B82F6;
+        50% {
+          transform: scale(1.02);
+        }
+      }
+
+      .shadow-xs {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      }
+
+      .progress-bar {
+        transition: width 0.5s ease;
+      }
+
+      .scroll-container {
+        scrollbar-width: thin;
+        scrollbar-color: #e5e7eb #f9fafb;
+      }
+
+      .scroll-container::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      .scroll-container::-webkit-scrollbar-track {
+        background: #f9fafb;
+      }
+
+      .scroll-container::-webkit-scrollbar-thumb {
+        background-color: #e5e7eb;
+        border-radius: 4px;
+      }
+
+      .gradient-bg {
+        background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      }
+
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
         }
 
-        .task-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        50% {
+          background-position: 100% 50%;
         }
 
-
-        .pulsee {
-            animation: pulsee 1.5s infinite;
+        100% {
+          background-position: 0% 50%;
         }
+      }
 
-        @keyframes pulsee {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.02);
-            }
-        }
-
-        .shadow-xs {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        }
-
-        .progress-bar {
-            transition: width 0.5s ease;
-        }
-
-        .scroll-container {
-            scrollbar-width: thin;
-            scrollbar-color: #E5E7EB #F9FAFB;
-        }
-
-        .scroll-container::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .scroll-container::-webkit-scrollbar-track {
-            background: #F9FAFB;
-        }
-
-        .scroll-container::-webkit-scrollbar-thumb {
-            background-color: #E5E7EB;
-            border-radius: 4px;
-        }
-
-        .gradient-bg {
-            background: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%);
-        }
-
-
-        @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        .gradient-bgg {
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
-            background-size: 400%;
-            animation: gradient 15s ease infinite;
-        }
+      .gradient-bgg {
+        background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+        background-size: 400%;
+        animation: gradient 15s ease infinite;
+      }
     </style>
-</head>
+  </head>
 
-<body class="gradient-bgg flex items-center justify-center min-h-screen">
+  <body class="gradient-bgg flex items-center justify-center min-h-screen">
 
-    <div id="app-loader" style="display: block;"
-        class="text-center bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl max-w-md w-full">
-        <div class="relative">
-            <div class="absolute inset-0 flex justify-center items-center">
-                <div class="h-24 w-24 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-            <svg class="mx-auto h-16 w-16 text-white opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+    <div id="57ee3d83dda0a7fd3f29e0859bbc6d8bc4046103"></div>
+
+    <div
+      id="app-loader"
+      style="display: block"
+      class="text-center bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl max-w-md w-full"
+    >
+      <div class="relative">
+        <div class="absolute inset-0 flex justify-center items-center">
+          <div
+            class="h-24 w-24 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"
+          ></div>
         </div>
-        <h1 class="mt-8 text-4xl font-extrabold text-white tracking-tight">Welcome to Telegram WebApp</h1>
-        <p class="mt-3 text-lg text-gray-200">WebApp developed by Kingstar...</p>
-        <div class="mt-6 flex justify-center space-x-3">
-            <div class="h-4 w-4 bg-white rounded-full animate-pulse" style="animation-delay: 0s"></div>
-            <div class="h-4 w-4 bg-white rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
-            <div class="h-4 w-4 bg-white rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
-        </div>
+        <svg
+          class="mx-auto h-16 w-16 text-white opacity-75"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
+        </svg>
+      </div>
+      <h1 class="mt-8 text-4xl font-extrabold text-white tracking-tight">
+        Welcome to Telegram WebApp
+      </h1>
+      <p class="mt-3 text-lg text-gray-200">WebApp developed by Kingstar...</p>
+      <div class="mt-6 flex justify-center space-x-3">
+        <div class="h-4 w-4 bg-white rounded-full animate-pulse" style="animation-delay: 0s"></div>
+        <div
+          class="h-4 w-4 bg-white rounded-full animate-pulse"
+          style="animation-delay: 0.2s"
+        ></div>
+        <div
+          class="h-4 w-4 bg-white rounded-full animate-pulse"
+          style="animation-delay: 0.4s"
+        ></div>
+      </div>
     </div>
-
 
     <div id="app" class="flex flex-col h-full max-w-md mx-auto hidden">
-
-        <!-- Header Section -->
-        <header class="shrink-0 bg-[#181818] p-4 border-t border-b border-purple-500/20 pt-5 rounded-2xl"
-            style="margin-top: 100px;">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="relative">
-                        <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff"
-                            class="w-10 h-10 rounded-full object-cover border-2 border-purple-500/50">
-                        <div
-                            class="absolute bottom-0 right-0 bg-green-400 w-2.5 h-2.5 rounded-full border-2 border-white">
-                        </div>
-                    </div>
-                    <div>
-                        <h2 id="user-name" class="font-semibold text-sm text-white">User</h2>
-                        <p class="text-xs text-white">
-                            Balance: <span id="user-balance" class="font-medium text-white">0.00</span> <span
-                                id="currency"></span>
-                        </p>
-                    </div>
-                </div>
+      <!-- Header Section -->
+      <header
+        class="shrink-0 bg-[#181818] p-4 border-t border-b border-purple-500/20 pt-5 rounded-2xl"
+        style="margin-top: 100px"
+      >
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-3">
+            <div class="relative">
+              <img
+                id="user-avatar"
+                src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff"
+                class="w-10 h-10 rounded-full object-cover border-2 border-purple-500/50"
+              />
+              <div
+                class="absolute bottom-0 right-0 bg-green-400 w-2.5 h-2.5 rounded-full border-2 border-white"
+              ></div>
             </div>
-        </header>
+            <div>
+              <h2 id="user-name" class="font-semibold text-sm text-white">User</h2>
+              <p class="text-xs text-white">
+                Balance:
+                <span id="user-balance" class="font-medium text-white">0.00</span>
+                <span id="currency"></span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
 
-        <!-- Main Content Sections -->
-        <main class="flex-1 overflow-y-auto scroll-container" style="padding-bottom:100px;">
+      <!-- Main Content Sections -->
+      <main class="flex-1 overflow-y-auto scroll-container" style="padding-bottom: 100px">
 
-            <!-- Tasks Section -->
-            <section id="home-section" class="p-4 space-y-5">
-
-
-                <!-- Daily Check-in Card -->
+        <!-- Tasks Section -->
+        <section id="home-section" class="p-4 space-y-5">
+          <!-- Daily Check-in Card -->
+          <div
+            class="relative bg-gradient-to-r from-purple-600/20 to-purple-1000 rounded-2xl p-4 sm:p-5 text-white shadow-2xl max-w-md mx-auto"
+          >
+            <div class=""></div>
+            <div class="relative z-10 space-y-4 sm:space-y-5">
+              <div class="text-center sm:text-left">
+                <h3 class="text-lg sm:text-xl font-bold tracking-tight">Daily Check-in Bonus</h3>
+                <p class="text-sm sm:text-base text-white/80">
+                  Claim your daily reward and keep your streak!
+                </p>
+              </div>
+              <div
+                class="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start"
+                id="days-list"
+              ></div>
+              <div class="bg-white/10 rounded-full h-2 sm:h-2.5 overflow-hidden">
                 <div
-                    class="relative bg-gradient-to-r from-purple-600/20 to-purple-1000 rounded-2xl p-4 sm:p-5 text-white shadow-2xl max-w-md mx-auto">
-                    <div class=""></div>
-                    <div class="relative z-10 space-y-4 sm:space-y-5">
-                        <div class="text-center sm:text-left">
-                            <h3 class="text-lg sm:text-xl font-bold tracking-tight">Daily Check-in Bonus</h3>
-                            <p class="text-sm sm:text-base text-white/80">Claim your daily reward and keep your streak!
-                            </p>
-                        </div>
-                        <div class="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start" id="days-list"></div>
-                        <div class="bg-white/10 rounded-full h-2 sm:h-2.5 overflow-hidden">
-                            <div id="streak-progress"
-                                class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full transition-all duration-500"
-                                style="width: 100%"></div>
-                        </div>
-                        <button id="checkin-btn"
-                            class="w-full font-semibold py-2.5 sm:py-3 rounded-xl flex items-center justify-center hover:bg-yellow-300 disabled:bg-[#181818] disabled:text-gray-300 disabled:cursor-not-allowed transition-colors duration-200 disabled bg-purple-300 bg-[#151515] opacity-80"
-                            disabled>
-                            <i class="fas fa-gift mr-2 text-indigo-800 text-base"></i>
-                            <span id="checkin-text">
-                                Wait For Next Day
-                            </span>
-                        </button>
-                    </div>
-                </div>
+                  id="streak-progress"
+                  class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full transition-all duration-500"
+                  style="width: 100%"
+                ></div>
+              </div>
+              <button
+                id="checkin-btn"
+                class="w-full font-semibold py-2.5 sm:py-3 rounded-xl flex items-center justify-center hover:bg-yellow-300 disabled:bg-[#181818] disabled:text-gray-300 disabled:cursor-not-allowed transition-colors duration-200 disabled bg-purple-300 bg-[#151515] opacity-80"
+                disabled
+              >
+                <i class="fas fa-gift mr-2 text-indigo-800 text-base"></i>
+                <span id="checkin-text">Wait For Next Day</span>
+              </button>
+            </div>
+          </div>
 
-                <!-- Referral Card -->
-                <div
-                    class="bg-gradient-to-r from-purple-600/20 to-purple-1000 p-4 rounded-2xl text-white shadow-md hover:shadow-lg transition-shadow duration-300">
-                    <div class="flex items-start justify-between">
-                        <div class="mr-2">
-                            <h3 class="font-bold text-sm mb-1">Invite Friends & Earn</h3>
-                            <p class="text-xs opacity-90">Get <span id="refer-commision">0</span>% of their earnings</p>
-                        </div>
-                        <i class="fas fa-users text-white opacity-20 text-2xl"></i>
-                    </div>
-                    <div class="mt-3">
-                        <button type="button" onclick="showSection('referral')"
-                            class="w-full bg-purple-600 text-white px-4 py-3 text-xs rounded-lg font-bold hover:bg-opacity-90 transition-all duration-200">
-                            Start Referring
-                        </button>
-                    </div>
-                </div>
+          <!-- Referral Card -->
+          <div
+            class="bg-gradient-to-r from-purple-600/20 to-purple-1000 p-4 rounded-2xl text-white shadow-md hover:shadow-lg transition-shadow duration-300"
+          >
+            <div class="flex items-start justify-between">
+              <div class="mr-2">
+                <h3 class="font-bold text-sm mb-1">Invite Friends & Earn</h3>
+                <p class="text-xs opacity-90">
+                  Get
+                  <span id="refer-commision">0</span>
+                  % of their earnings
+                </p>
+              </div>
+              <i class="fas fa-users text-white opacity-20 text-2xl"></i>
+            </div>
+            <div class="mt-3">
+              <button
+                type="button"
+                onclick="showSection('referral')"
+                class="w-full bg-purple-600 text-white px-4 py-3 text-xs rounded-lg font-bold hover:bg-opacity-90 transition-all duration-200"
+              >
+                Start Referring
+              </button>
+            </div>
+          </div>
 
-
-                <!-- Ads Card -->
-                <div>
-                    <div class="space-y-3">
-                        <div
-                            class="bg-gradient-to-r task-cardd  p-4 rounded-xl  shadow-xs from-purple-600/20 to-purple-1000">
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h4 class="font-semibold text-sm text-white">Watch Ads</h4>
-                                    <p class="text-xs text-white opacity-90 mt-1">Earn by watching short video ads</p>
-                                </div>
-                                <div
-                                    class="flex items-center bg-[#181818] px-2.5 py-1 rounded-lg text-white opacity-70">
-                                    <i class="fas fa-coins text-yellow-500 mr-1.5 text-xs"></i>
-                                    <span class="font-bold text-sm" id="adsReward">
-                                        0
-                                    </span>
-                                    <span id="currency" class="font-bold text-sm ml-1">
-                                    </span>
-                                    <span class="font-bold text-sm ml-1">/ Ads</span>
-                                </div>
-                            </div>
-                            <button type="button" onclick="showSection('all-tasks')"
-                                class="w-full bg-purple-600 font-bold text-white text-xs py-2 rounded-xl shadow-md hover:opacity-90 transition-opacity duration-200">
-                                Start Task
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-
-            </section>
-
-
-            <!-- All Tasks Section -->
-            <section id="all-tasks-section" class="space-y-6 mt-2 hidden">
-                <div class="m-4 bg-[#181818] p-5 rounded-2xl border border-purple-600/20 shadow-xs">
-                    <h3 class="font-bold mb-4 text-white"><i class="fas fa-ad text-lg mb-1"></i> Ads Task Overview</h3>
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div class="bg-purple-900 p-3 rounded-lg">
-                            <p class="text-sm text-white">Daily Tasks Completed</p>
-                            <p class="font-bold text-lg text-white" id="today-tasks">
-                                0
-                            </p>
-                            <div class="bg-gray-200 rounded-full h-2 mt-2">
-                                <div id="daily-progress"
-                                    class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full progress-bar"
-                                    style="width: 100%">
-                                </div>
-                            </div>
-                            <p id="daily-tasks-limit" class="text-xs text-white mt-1">Limit:
-                                0 tasks/day
-                            </p>
-                        </div>
-                        <div class="bg-purple-900 p-3 rounded-lg">
-                            <p class="text-sm text-white">Hourly Tasks Completed</p>
-                            <p class="font-bold text-lg text-white" id="hourly-tasks">
-                                0
-                            </p>
-                            <div class="bg-gray-200 rounded-full h-2 mt-2">
-                                <div id="hourly-progress"
-                                    class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full progress-bar"
-                                    style="width: 100%">
-                                </div>
-                            </div>
-                            <p id="hourly-tasks-limit" class="text-xs text-white mt-1">Limit:
-                                0 tasks/hour
-                            </p>
-                        </div>
-                        <div class="bg-purple-900 p-3 rounded-lg text-white">
-                            <p class="text-sm">Lifetime Completed Tasks</p>
-                            <p class="font-bold text-lg" id="lifetime-completed-tasks">
-                                0
-                            </p>
-                        </div>
-                        <div class="bg-purple-900 p-3 rounded-lg text-white">
-                            <p class="text-sm">Total Earnings</p>
-                            <p class="font-bold text-lg">
-                                <span id="total-earnings">
-                                    0
-                                </span>
-                                <span id="currency">
-                                </span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <button type="button" id="show_ad"
-                        class="w-full bg-purple-600/40 text-white font-bold py-4 rounded-xl shadow-md hover:opacity-80 disabled cursor-not-allowed disabled">
-                    </button>
-
-                    <a href="https://cylopy.com/cuhdl?wh=DTawT6SblLv9OLczJSo1tFRr" onclick="showLink('link',event);">
-                        <button
-                            class="w-full bg-purple-600/40 text-white font-bold py-4 rounded-xl shadow-md hover:opacity-80 mt-5"><i
-                                class="fa fa-link"></i> Visit Link ( <i class="fas fa-gift"></i> 10 SHIB)</button>
-                    </a>
-                </div>
-
-                <div id="tg-tasks-section" class="p-4 space-y-6">
-                    <div class="bg-[#181818] p-5 rounded-2xl border border-purple-600/20 shadow-xs">
-                        <h3 class="font-bold mb-4 text-white"><i class="fas fa-tasks"></i> Social Tasks</h3>
-                        <div id="tasks-div" class="space-y-3">
-
-                            <!-- Info Box: Promote Your Channel -->
-                            <div class="mt-4 pt-4 border-t border-purple-600/20 text-center">
-                                <p class="text-xs text-white font-small opacity-70">
-                                    Want your channel listed?
-                                    <a href="https://t.me/gill728" target="_blank"
-                                        class="text-purple-600 hover:bg-text-blue-700 font-medium">
-                                        DM me <i class="fas fa-message"></i>
-                                    </a>
-                                </p>
-                            </div>
-
-                            <p id="no-task" class="text-sm text-gray-500 text-center py-4">No tasks available</p>
-
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-
-
-            <!-- Referral Section -->
-            <section id="referral-section" class="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto hidden">
-
-                <div
-                    class="bg-[#181818] p-6 sm:p-8 rounded-2xl border border-purple-600/20 shadow-lg hover:shadow-xl transition-all duration-300 max-w-lg mx-auto">
-                    <div class="flex items-center justify-between mb-5">
-                        <h3 class="font-bold text-xl text-white tracking-tight">Refer & Earn Forever</h3>
-                        <div class="relative">
-                            <i class="fas fa-gift text-indigo-600 text-2xl animate-bounce"></i>
-                            <span
-                                class="absolute -top-2 -right-2 bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">
-                                <span id="refer-commision">0</span>%
-                            </span>
-                        </div>
-                    </div>
-                    <div class="mb-6">
-                        <p class="text-sm text-white font-medium mb-4">
-                            Earn
-                            <span class="font-semibold text-indigo-600">
-                                <span id="refer-direct-bonus">0</span> <span id="currency"></span>
-                            </span>
-                            when your referral complete their first 5 tasks plus
-                            <span class="font-semibold text-indigo-600">
-                                <span id="refer-commision">0</span>%
-                            </span> of your friends earnings for life! Follow these simple steps to start:
-                        </p>
-                        <div class="space-y-3 mb-6">
-                            <div class="flex items-start space-x-3">
-                                <div
-                                    class="bg-indigo-100 rounded-full flex items-center justify-center h-10 aspect-square min-w-10">
-                                    <i class="fas fa-link text-indigo-600 text-base"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-white">1. Copy Your Link</p>
-                                    <p class="text-xs text-white opacity-90">Grab your unique referral link below.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-3">
-                                <div
-                                    class="bg-indigo-100 rounded-full flex items-center justify-center h-10 aspect-square min-w-10">
-                                    <i class="fas fa-share-alt text-indigo-600 text-base"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-white">2. Share with Friends</p>
-                                    <p class="text-xs text-white opacity-90">Use the Telegram, WhatsApp, or Twitter/X
-                                        buttons to
-                                        share your link.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-3">
-                                <div
-                                    class="bg-indigo-100 rounded-full flex items-center justify-center h-10 aspect-square min-w-10">
-                                    <i class="fas fa-coins text-indigo-600 text-base"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-white">3. Earn Lifetime Rewards</p>
-                                    <p class="text-xs text-white opacity-90">Get
-                                        <span id="refer-commision">0</span>% of your friends earnings
-                                        forever once they join!
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <label class="block text-sm font-semibold text-white mb-2 tracking-wide">Your Referral
-                            Link</label>
-                        <div class="relative flex items-center group">
-                            <input type="text" id="referral-link" value="" readonly
-                                class="w-full p-3 pl-4 pr-12 border border-gray-300 rounded-xl bg-gray-50 text-gray-700 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 shadow-sm group-hover:shadow-md">
-                            <button type="button" id="copy-referral"
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
-                                title="Copy to clipboard">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex justify-center gap-3">
-
-                        <a href="https://t.me/share/url?url=link&text=
-                            Join me and earn rewards with my referral link!" target="_blank"
-                            class="flex items-center bg-indigo-600 text-white px-3 py-1.5 rounded-full font-medium text-xs hover:bg-indigo-700 transition-all duration-300 shadow-sm hover:shadow-md"
-                            title="Share on Telegram">
-                            <i class="fab fa-telegram-plane mr-1 text-sm"></i> Telegram
-                        </a>
-
-
-                        <a href="https://api.whatsapp.com/send?text=Join me and earn rewards with
-                            my referral link: $referLink!" target="_blank"
-                            class="flex items-center bg-green-600 text-white px-3 py-1.5 rounded-full font-medium text-xs hover:bg-green-700 transition-all duration-300 shadow-sm hover:shadow-md"
-                            title="Share on WhatsApp">
-                            <i class="fab fa-whatsapp mr-1 text-sm"></i> WhatsApp
-                        </a>
-
-
-
-                        <a href="https://twitter.com/intent/tweet?text=Join me and earn rewards
-                            with my referral link: $referLink!" target="_blank"
-                            class="flex items-center bg-blue-500 text-white px-3 py-1.5 rounded-full font-medium text-xs hover:bg-blue-600 transition-all duration-300 shadow-sm hover:shadow-md"
-                            title="Share on Twitter/X">
-                            <i class="fab fa-twitter mr-1 text-sm"></i> Twitter/X
-                        </a>
-
-                    </div>
-                </div>
-
-
-
-                <div class="bg-[#181818] p-4 rounded-2xl border border-purple-600/20 shadow-xs">
-                    <h3 class="font-bold text-sm mb-3 text-white">Referrals List</h3>
-                    <div class="space-y-3" id="referral-earnings">
-
-                    </div>
-                </div>
-            </section>
-
-
-            <!-- Offerwall Section -->
-            <section id="offerwall-section"></section>
-
-
-            <!-- Withdraw Section -->
-            <section id="withdraw-section" class="p-4 space-y-0 hidden">
-                <form id="withdraw-form" action="/submit_withdrawal" method="POST">
-                    <input type="hidden" name="amount" id="form-amount">
-                    <input type="hidden" name="method_id" id="form-method-id">
-                    <input type="hidden" name="address" id="form-address">
-                </form>
-                <div class="p-5 rounded-2xl bg-[#181818] shadow-xs">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-white"><i class="fas fa-funds"></i>Withdraw Funds</h3>
-                        <div class="flex items-center bg-blue-50 px-3 py-1.5 rounded-lg">
-                            <i class="fas fa-coins text-yellow-500 mr-2 text-sm"></i>
-                            <span id="user-balance" class="font-bold">
-                            </span> &nbsp; <span id="currency" class="font-bold">
-                            </span>
-                        </div>
-                    </div>
-                    <div class="mb-5">
-                        <label class="block text-sm font-medium text-white mb-2">Amount</label>
-                        <div class="relative">
-                            <input type="number" id="withdraw-amount" placeholder="Enter amount"
-                                class="w-full p-3 pl-4 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 opacity-80 focus:outline-none">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                                <span class="text-gray-500" id="currency">
-                                </span>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-2">
-                            Minimum: <span id="minimum-withdrawal">0.00</span>
-                        </p>
-                        <p class="text-xs text-gray-500 mt-0">
-                            Withdrawal fee: <span id="withdrawal-fee">0.00</span>
-                        </p>
-                    </div>
-                    <div class="mb-5">
-                        <label class="block text-sm font-medium text-white mb-2">Withdrawal Address</label>
-                        <input type="text" id="withdraw-address" placeholder="Enter wallet address (BEP20)"
-                            class="w-full p-3 pl-4 border rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 opacity-80 focus:outline-none">
-                        <p class="text-xs text-gray-500 mt-2">
-                            Enter the address for your BEP20 cryptocurrency method (e.g.,
-                            0x302D8DA8967f9afA00f1DcdbD70aF0F30784BDF2)
-                        </p>
-                    </div>
-
-                    <button type="button" id="withdraw-btn"
-                        class="w-full bg-purple-600 opacity-90 text-white font-bold py-4 rounded-xl shadow-md hover:opacity-80">
-                        Request Withdrawal
-                    </button>
-                </div>
-
-                <div class="bg-[#181818] p-4 rounded-2xl shadow-xs" style="margin-top: 1rem;">
-                    <h3 class="font-bold text-sm mb-3 text-white">Recent Withdraws</h3>
-                    <div id="withdraw-history" class="space-y-3"></div>
-                </div>
-            </section>
-
-
-
-            <!-- Profile Section -->
-            <section id="profile-section" class="p-4 space-y-6 hidden">
-                <div class="bg-[#181818] p-5 rounded-2xl border border-purple-600/20 shadow-xs text-center">
-                    <div class="flex justify-center mb-3">
-                        <div class="relative">
-                            <img id="user-avatar"
-                                src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff"
-                                class="w-16 h-16 rounded-full border-4 border-purple-600">
-                            <div
-                                class="absolute bottom-1 right-1 bg-green-400 w-3 h-3 rounded-full border-2 border-white">
-                            </div>
-                        </div>
-                    </div>
-                    <h3 id="user-name" class="font-bold text-lg text-white">
-                        User
-                    </h3>
-                    <p class="text-sm text-gray-500" id="date-joined">Joined
-                        x seconds ago
+          <!-- Ads Card -->
+          <div>
+            <div class="space-y-3">
+              <div
+                class="bg-gradient-to-r task-cardd p-4 rounded-xl shadow-xs from-purple-600/20 to-purple-1000"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 class="font-semibold text-sm text-white">Watch Ads</h4>
+                    <p class="text-xs text-white opacity-90 mt-1">
+                      Earn by watching short video ads
                     </p>
+                  </div>
+                  <div
+                    class="flex items-center bg-[#181818] px-2.5 py-1 rounded-lg text-white opacity-70"
+                  >
+                    <i class="fas fa-coins text-yellow-500 mr-1.5 text-xs"></i>
+                    <span class="font-bold text-sm" id="adsReward">0</span>
+                    <span id="currency" class="font-bold text-sm ml-1"></span>
+                    <span class="font-bold text-sm ml-1">/ Ads</span>
+                  </div>
                 </div>
-                <div class="bg-[#181818] p-4 rounded-2xl border border-purple-600/20 shadow-xs">
-                    <h3 class="font-bold text-sm mb-3 text-white">Your Statistics</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-blue-200 p-3 rounded-lg">
-                            <div class="flex items-center mb-1">
-                                <i class="fas fa-coins text-yellow-500 mr-2"></i>
-                                <span class="text-xs font-medium">Total Earned</span>
-                            </div>
-                            <p class="font-bold"><span id="total-earned">
-                                    0
-                                </span> <span id="currency">
-
-                                </span></p>
-                        </div>
-                        <div class="bg-green-200 p-3 rounded-lg">
-                            <div class="flex items-center mb-1">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span class="text-xs font-medium">Tasks Done</span>
-                            </div>
-                            <p class="font-bold" id="lifetime-completed-tasks">
-                                19
-                            </p>
-                        </div>
-                        <div class="bg-purple-200 p-3 rounded-lg">
-                            <div class="flex items-center mb-1">
-                                <i class="fas fa-calendar-check text-purple-500 mr-2"></i>
-                                <span class="text-xs font-medium">Current Streak</span>
-                            </div>
-                            <p class="font-bold"><span id="streak">
-                                    0
-                                </span> days</p>
-                        </div>
-                        <div class="bg-amber-100 p-3 rounded-lg">
-                            <div class="flex items-center mb-1">
-                                <i class="fas fa-users text-amber-500 mr-2"></i>
-                                <span class="text-xs font-medium">Referrals</span>
-                            </div>
-                            <p id="refer-count" class="font-bold">
-                                0
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="button" onclick="showSection('referral')"
-                    class="w-full bg-purple-600 text-white font-bold py-2 rounded-xl shadow-md hover:opacity-90 transition-opacity duration-200">
-                    Referral Program
+                <button
+                  type="button"
+                  onclick="showSection('all-tasks')"
+                  class="w-full bg-purple-600 font-bold text-white text-xs py-2 rounded-xl shadow-md hover:opacity-90 transition-opacity duration-200"
+                >
+                  Start Task
                 </button>
-
-                <div class="space-y-2">
-                    <a href="https://t.me/gill728" target="_blank"
-                        class="w-full bg-blue-600 text-white p-3 rounded-xl shadow-xs text-left flex items-center">
-                        <i class="fas fa-question-circle text-white mr-3"></i>
-                        <span class="text-sm font-medium">Help Center</span>
-                    </a>
-                    <a href="https://t.me/gill728" target="_blank"
-                        class="w-full bg-blue-600 text-white p-3 rounded-xl shadow-xs text-left flex items-center">
-                        <i class="fab fa-telegram-plane text-white mr-3"></i>
-                        <span class="text-sm font-medium">Developer Contact</span>
-                    </a>
-
-                    <button id="logout-btn"
-                        class="w-full bg-blue-600 text-white p-3 rounded-xl shadow-xs text-left flex items-center">
-                        <i class="fas fa-sign-out-alt text-red-500 mr-3"></i>
-                        <span class="text-sm font-medium">Log Out</span>
-                    </button>
-                </div>
-            </section>
-
-        </main>
-
-
-
-        <!-- Fixed Bottom Navigation -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-[#181818] border-t border-purple-500/20 shadow-sm z-50"
-            style="z-index: 1;">
-            <div class="flex justify-around items-center text-center">
-
-                <button data-section="home"
-                    class="nav-btn flex flex-col items-center justify-center p-2 w-full text-purple-600 bg-[#181818] active-tab">
-                    <i class="fas fa-home text-lg mb-1"></i>
-                    <span class="text-[11px] font-medium truncate leading-tight">Home</span>
-                </button>
-
-                <button data-section="all-tasks"
-                    class="nav-btn flex flex-col items-center justify-center p-2 w-full text-gray-500 bg-[#181818]">
-                    <i class="fas fa-ad text-lg mb-1"></i>
-                    <span class="text-[11px] font-medium truncate leading-tight">All Tasks</span>
-                </button>
-
-
-                <button data-section="offerwall"
-                    class="nav-btn flex flex-col items-center justify-center p-2 w-full text-gray-500 bg-[#181818]">
-                    <i class="fas fa-bullhorn text-lg mb-1"></i>
-                    <span class="text-[11px] font-medium truncate leading-tight">OfferZone</span>
-                </button>
-
-
-                <button data-section="withdraw"
-                    class="nav-btn flex flex-col items-center justify-center p-2 w-full text-gray-500 bg-[#181818]">
-                    <i class="fas fa-wallet text-lg mb-1"></i>
-                    <span class="text-[11px] font-medium truncate leading-tight">Withdraw</span>
-                </button>
-
-                <button data-section="profile"
-                    class="nav-btn flex flex-col items-center justify-center p-2 w-full text-gray-500 bg-[#181818]">
-                    <i class="fas fa-user text-lg mb-1"></i>
-                    <span class="text-[11px] font-medium truncate leading-tight">Profile</span>
-                </button>
-
+              </div>
             </div>
-        </nav>
+          </div>
+        </section>
 
+        <!-- All Tasks Section -->
+        <section id="all-tasks-section" class="space-y-6 mt-2 hidden">
+          <div id="housing" class="m-4 bg-[#181818] p-5 rounded-2xl border border-purple-600/20 shadow-xs">
+            <h3 class="font-bold mb-4 text-white">
+              <i class="fas fa-ad text-lg mb-1"></i>
+              Ads Task Overview
+            </h3>
+             <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-purple-900 p-3 rounded-lg">
+                <p class="text-sm text-white">Daily Tasks Completed</p>
+                <p class="font-bold text-lg text-white" id="today-tasks">0</p>
+                <div class="bg-gray-200 rounded-full h-2 mt-2">
+                  <div
+                    id="daily-progress"
+                    class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full progress-bar"
+                    style="width: 100%"
+                  ></div>
+                </div>
+                <p id="daily-tasks-limit" class="text-xs text-white mt-1">Limit: 0 tasks/day</p>
+              </div>
+              <div class="bg-purple-900 p-3 rounded-lg">
+                <p class="text-sm text-white">Hourly Tasks Completed</p>
+                <p class="font-bold text-lg text-white" id="hourly-tasks">0</p>
+                <div class="bg-gray-200 rounded-full h-2 mt-2">
+                  <div
+                    id="hourly-progress"
+                    class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full progress-bar"
+                    style="width: 100%"
+                  ></div>
+                </div>
+                <p id="hourly-tasks-limit" class="text-xs text-white mt-1">Limit: 0 tasks/hour</p>
+              </div>
+              <div class="bg-purple-900 p-3 rounded-lg text-white">
+                <p class="text-sm">Lifetime Completed Tasks</p>
+                <p class="font-bold text-lg" id="lifetime-completed-tasks">0</p>
+              </div>
+              <div class="bg-purple-900 p-3 rounded-lg text-white">
+                <p class="text-sm">Total Earnings</p>
+                <p class="font-bold text-lg">
+                  <span id="total-earnings">0</span>
+                  <span id="currency"></span>
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              id="show_ad"
+              class="w-full bg-purple-600/40 text-white font-bold py-4 rounded-xl shadow-md hover:opacity-80 disabled cursor-not-allowed disabled"
+            ></button>
+          </div>
+
+          <div id="tg-tasks-section" class="p-4 space-y-6">
+            <div class="bg-[#181818] p-5 rounded-2xl border border-purple-600/20 shadow-xs">
+              <h3 class="font-bold mb-4 text-white">
+                <i class="fas fa-tasks"></i>
+                Social Tasks
+              </h3>
+              <div id="tasks-div" class="space-y-3">
+                <!-- Info Box: Promote Your Channel -->
+                <div class="mt-4 pt-4 border-t border-purple-600/20 text-center">
+                  <p class="text-xs text-white font-small opacity-70">
+                    Want your channel listed?
+                    <a
+                      href="https://t.me/gill728"
+                      target="_blank"
+                      class="text-purple-600 hover:bg-text-blue-700 font-medium"
+                    >
+                      DM me
+                      <i class="fas fa-message"></i>
+                    </a>
+                  </p>
+                </div>
+
+                <p id="no-task" class="text-sm text-gray-500 text-center py-4">
+                  No tasks available
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Referral Section -->
+        <section id="referral-section" class="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto hidden">
+          <div
+            class="bg-[#181818] p-6 sm:p-8 rounded-2xl border border-purple-600/20 shadow-lg hover:shadow-xl transition-all duration-300 max-w-lg mx-auto"
+          >
+            <div class="flex items-center justify-between mb-5">
+              <h3 class="font-bold text-xl text-white tracking-tight">Refer & Earn Forever</h3>
+              <div class="relative">
+                <i class="fas fa-gift text-indigo-600 text-2xl animate-bounce"></i>
+                <span
+                  class="absolute -top-2 -right-2 bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full"
+                >
+                  <span id="refer-commision">0</span>
+                  %
+                </span>
+              </div>
+            </div>
+            <div class="mb-6">
+              <p class="text-sm text-white font-medium mb-4">
+                Earn
+                <span class="font-semibold text-indigo-600">
+                  <span id="refer-direct-bonus">0</span>
+                  <span id="currency"></span>
+                </span>
+                when your referral complete their first 5 tasks plus
+                <span class="font-semibold text-indigo-600">
+                  <span id="refer-commision">0</span>
+                  %
+                </span>
+                of your friends earnings for life! Follow these simple steps to start:
+              </p>
+              <div class="space-y-3 mb-6">
+                <div class="flex items-start space-x-3">
+                  <div
+                    class="bg-indigo-100 rounded-full flex items-center justify-center h-10 aspect-square min-w-10"
+                  >
+                    <i class="fas fa-link text-indigo-600 text-base"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-white">1. Copy Your Link</p>
+                    <p class="text-xs text-white opacity-90">
+                      Grab your unique referral link below.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                  <div
+                    class="bg-indigo-100 rounded-full flex items-center justify-center h-10 aspect-square min-w-10"
+                  >
+                    <i class="fas fa-share-alt text-indigo-600 text-base"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-white">2. Share with Friends</p>
+                    <p class="text-xs text-white opacity-90">
+                      Use the Telegram, WhatsApp, or Twitter/X buttons to share your link.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                  <div
+                    class="bg-indigo-100 rounded-full flex items-center justify-center h-10 aspect-square min-w-10"
+                  >
+                    <i class="fas fa-coins text-indigo-600 text-base"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-white">3. Earn Lifetime Rewards</p>
+                    <p class="text-xs text-white opacity-90">
+                      Get
+                      <span id="refer-commision">0</span>
+                      % of your friends earnings forever once they join!
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <label class="block text-sm font-semibold text-white mb-2 tracking-wide">
+                Your Referral Link
+              </label>
+              <div class="relative flex items-center group">
+                <input
+                  type="text"
+                  id="referral-link"
+                  value=""
+                  readonly
+                  class="w-full p-3 pl-4 pr-12 border border-gray-300 rounded-xl bg-gray-50 text-gray-700 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 shadow-sm group-hover:shadow-md"
+                />
+                <button
+                  type="button"
+                  id="copy-referral"
+                  class="absolute right-2 top-1/2 transform -translate-y-1/2 text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
+                  title="Copy to clipboard"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="flex justify-center gap-3">
+              <a
+                href="https://t.me/share/url?url=link&text=
+                            Join me and earn rewards with my referral link!"
+                target="_blank"
+                class="flex items-center bg-indigo-600 text-white px-3 py-1.5 rounded-full font-medium text-xs hover:bg-indigo-700 transition-all duration-300 shadow-sm hover:shadow-md"
+                title="Share on Telegram"
+              >
+                <i class="fab fa-telegram-plane mr-1 text-sm"></i>
+                Telegram
+              </a>
+
+              <a
+                href="https://api.whatsapp.com/send?text=Join me and earn rewards with
+                            my referral link: $referLink!"
+                target="_blank"
+                class="flex items-center bg-green-600 text-white px-3 py-1.5 rounded-full font-medium text-xs hover:bg-green-700 transition-all duration-300 shadow-sm hover:shadow-md"
+                title="Share on WhatsApp"
+              >
+                <i class="fab fa-whatsapp mr-1 text-sm"></i>
+                WhatsApp
+              </a>
+
+              <a
+                href="https://twitter.com/intent/tweet?text=Join me and earn rewards
+                            with my referral link: $referLink!"
+                target="_blank"
+                class="flex items-center bg-blue-500 text-white px-3 py-1.5 rounded-full font-medium text-xs hover:bg-blue-600 transition-all duration-300 shadow-sm hover:shadow-md"
+                title="Share on Twitter/X"
+              >
+                <i class="fab fa-twitter mr-1 text-sm"></i>
+                Twitter/X
+              </a>
+            </div>
+          </div>
+
+          <div class="bg-[#181818] p-4 rounded-2xl border border-purple-600/20 shadow-xs">
+            <h3 class="font-bold text-sm mb-3 text-white">Referrals List</h3>
+            <div class="space-y-3" id="referral-earnings"></div>
+          </div>
+        </section>
+
+        <!-- Withdraw Section -->
+        <section id="withdraw-section" class="p-4 space-y-0 hidden">
+          <form id="withdraw-form" action="/submit_withdrawal" method="POST">
+            <input type="hidden" name="amount" id="form-amount" />
+            <input type="hidden" name="method_id" id="form-method-id" />
+            <input type="hidden" name="address" id="form-address" />
+          </form>
+          <div class="p-5 rounded-2xl bg-[#181818] shadow-xs">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-white">
+                <i class="fas fa-funds"></i>
+                Withdraw Funds
+              </h3>
+              <div class="flex items-center bg-blue-50 px-2 py-1 rounded-lg">
+                <i class="fas fa-coins text-yellow-500 mr-2 text-sm"></i>
+                <span id="user-balance" class="font-bold"></span>
+                &nbsp;
+                <span id="currency" class="font-bold"></span>
+              </div>
+            </div>
+            <div class="mb-5">
+              <label class="block text-sm font-medium text-white mb-2">Amount</label>
+              <div class="relative">
+                <input
+                  type="number"
+                  id="withdraw-amount"
+                  placeholder="Enter amount"
+                  class="w-full p-3 pl-4 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 opacity-80 focus:outline-none"
+                />
+                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                  <span class="text-gray-500" id="currency"></span>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2">
+                Minimum:
+                <span id="minimum-withdrawal">0.00</span>
+              </p>
+              <p class="text-xs text-gray-500 mt-0">
+                Withdrawal fee:
+                <span id="withdrawal-fee">0.00</span>
+              </p>
+            </div>
+            <div class="mb-5">
+              <label class="block text-sm font-medium text-white mb-2">Withdrawal Address</label>
+              <input
+                type="text"
+                id="withdraw-address"
+                placeholder="Enter wallet address (BEP20)"
+                class="w-full p-3 pl-4 border rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-purple-500 opacity-80 focus:outline-none"
+              />
+              <p class="text-xs text-gray-500 mt-2">
+                Enter the address for your BEP20 cryptocurrency method (e.g.,
+                0x302D8DA8967f9afA00f1DcdbD70aF0F30784BDF2)
+              </p>
+            </div>
+
+            <button
+              type="button"
+              id="withdraw-btn"
+              class="w-full bg-purple-600 opacity-90 text-white font-bold py-4 rounded-xl shadow-md hover:opacity-80"
+            >
+              Request Withdrawal
+            </button>
+          </div>
+
+          <div class="bg-[#181818] p-4 rounded-2xl shadow-xs" style="margin-top: 1rem">
+            <h3 class="font-bold text-sm mb-3 text-white">Recent Withdraws</h3>
+            <div id="withdraw-history" class="space-y-3"></div>
+          </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile-section" class="p-4 space-y-6 hidden">
+          <div
+            class="bg-[#181818] p-5 rounded-2xl border border-purple-600/20 shadow-xs text-center"
+          >
+            <div class="flex justify-center mb-3">
+              <div class="relative">
+                <img
+                  id="user-avatar"
+                  src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff"
+                  class="w-16 h-16 rounded-full border-4 border-purple-600"
+                />
+                <div
+                  class="absolute bottom-1 right-1 bg-green-400 w-3 h-3 rounded-full border-2 border-white"
+                ></div>
+              </div>
+            </div>
+            <h3 id="user-name" class="font-bold text-lg text-white">User</h3>
+            <p class="text-sm text-gray-500" id="date-joined">Joined x seconds ago</p>
+          </div>
+          <div class="bg-[#181818] p-4 rounded-2xl border border-purple-600/20 shadow-xs">
+            <h3 class="font-bold text-sm mb-3 text-white">Your Statistics</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-blue-200 p-3 rounded-lg">
+                <div class="flex items-center mb-1">
+                  <i class="fas fa-coins text-yellow-500 mr-2"></i>
+                  <span class="text-xs font-medium">Total Earned</span>
+                </div>
+                <p class="font-bold">
+                  <span id="total-earned">0</span>
+                  <span id="currency"></span>
+                </p>
+              </div>
+              <div class="bg-green-200 p-3 rounded-lg">
+                <div class="flex items-center mb-1">
+                  <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                  <span class="text-xs font-medium">Tasks Done</span>
+                </div>
+                <p class="font-bold" id="lifetime-completed-tasks">19</p>
+              </div>
+              <div class="bg-purple-200 p-3 rounded-lg">
+                <div class="flex items-center mb-1">
+                  <i class="fas fa-calendar-check text-purple-500 mr-2"></i>
+                  <span class="text-xs font-medium">Current Streak</span>
+                </div>
+                <p class="font-bold">
+                  <span id="streak">0</span>
+                  days
+                </p>
+              </div>
+              <div class="bg-amber-100 p-3 rounded-lg">
+                <div class="flex items-center mb-1">
+                  <i class="fas fa-users text-amber-500 mr-2"></i>
+                  <span class="text-xs font-medium">Referrals</span>
+                </div>
+                <p id="refer-count" class="font-bold">0</p>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onclick="showSection('referral')"
+            class="w-full bg-purple-600 text-white font-bold py-2 rounded-xl shadow-md hover:opacity-90 transition-opacity duration-200"
+          >
+            Referral Program
+          </button>
+
+          <div class="space-y-2">
+            <a
+              href="https://t.me/gill728"
+              target="_blank"
+              class="w-full bg-blue-600 text-white p-3 rounded-xl shadow-xs text-left flex items-center"
+            >
+              <i class="fas fa-question-circle text-white mr-3"></i>
+              <span class="text-sm font-medium">Help Center</span>
+            </a>
+            <a
+              href="https://t.me/gill728"
+              target="_blank"
+              class="w-full bg-blue-600 text-white p-3 rounded-xl shadow-xs text-left flex items-center"
+            >
+              <i class="fab fa-telegram-plane text-white mr-3"></i>
+              <span class="text-sm font-medium">Developer Contact</span>
+            </a>
+
+            <button
+              id="logout-btn"
+              class="w-full bg-blue-600 text-white p-3 rounded-xl shadow-xs text-left flex items-center"
+            >
+              <i class="fas fa-sign-out-alt text-red-500 mr-3"></i>
+              <span class="text-sm font-medium">Log Out</span>
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <!-- Fixed Bottom Navigation -->
+      <nav
+        class="fixed bottom-0 left-0 right-0 bg-[#181818] border-t border-purple-500/20 shadow-sm z-50"
+        style="z-index: 1"
+      >
+        <div class="flex justify-around items-center text-center">
+          <button
+            data-section="home"
+            class="nav-btn flex flex-col items-center justify-center p-2 w-full text-purple-600 bg-[#181818] active-tab"
+          >
+            <i class="fas fa-home text-lg mb-1"></i>
+            <span class="text-[11px] font-medium truncate leading-tight">Home</span>
+          </button>
+
+          <button
+            data-section="all-tasks"
+            class="nav-btn flex flex-col items-center justify-center p-2 w-full text-gray-500 bg-[#181818]"
+          >
+            <i class="fas fa-ad text-lg mb-1"></i>
+            <span class="text-[11px] font-medium truncate leading-tight">All Tasks</span>
+          </button>
+
+          <button
+            data-section="offerwall"
+            class="nav-btn flex flex-col items-center justify-center p-2 w-full text-gray-500 bg-[#181818]"
+          >
+            <i class="fas fa-bullhorn text-lg mb-1"></i>
+            <span class="text-[11px] font-medium truncate leading-tight">OfferZone</span>
+          </button>
+
+          <button
+            data-section="withdraw"
+            class="nav-btn flex flex-col items-center justify-center p-2 w-full text-gray-500 bg-[#181818]"
+          >
+            <i class="fas fa-wallet text-lg mb-1"></i>
+            <span class="text-[11px] font-medium truncate leading-tight">Withdraw</span>
+          </button>
+
+          <button
+            data-section="profile"
+            class="nav-btn flex flex-col items-center justify-center p-2 w-full text-gray-500 bg-[#181818]"
+          >
+            <i class="fas fa-user text-lg mb-1"></i>
+            <span class="text-[11px] font-medium truncate leading-tight">Profile</span>
+          </button>
+        </div>
+      </nav>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+      let tg = window.Telegram.WebApp;
+/*
+      tg = {
+        ...tg,
+        initData:
+          'query_id=AAF3S49XAwAAAHdLj1e5NnX3&user=%7B%22id%22%3A7911459703%2C%22first_name%22%3A%22Kingstar%20%F0%9F%AB%86%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22gill728%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FUlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg%22%7D&auth_date=1755720767&signature=STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw&hash=c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41',
+        initDataUnsafe: {
+          query_id: 'AAF3S49XAwAAAHdLj1e5NnX3',
+          user: {
+            id: 7911459703,
+            first_name: 'Bahdboy',
+            last_name: 'kingstar',
+            username: 'gill728',
+            language_code: 'en',
+            allows_write_to_pm: true,
+            photo_url:
+              'https://t.me/i/userpic/320/UlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg',
+          },
+          auth_date: '1755720767',
+          signature:
+            'STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw',
+          hash: 'c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41',
+        },
+      };
+      */
 
-        let tg = window.Telegram.WebApp;
-        
-                tg = {
-                    ...tg,
-                    initData: "query_id=AAF3S49XAwAAAHdLj1e5NnX3&user=%7B%22id%22%3A7911459703%2C%22first_name%22%3A%22Kingstar%20%F0%9F%AB%86%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22gill728%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FUlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg%22%7D&auth_date=1755720767&signature=STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw&hash=c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41",
-                    initDataUnsafe: {
-                        query_id: 'AAF3S49XAwAAAHdLj1e5NnX3',
-                        user: {
-                            id: 7911459703,
-                            first_name: 'Bahdboy',
-                            last_name: 'kingstar',
-                            username: 'gill728',
-                            language_code: 'en',
-                            allows_write_to_pm: true,
-                            photo_url: 'https://t.me/i/userpic/320/UlUpXd_GVyhLD6ErkbkPzxwNPdXBAZc8e36fQzmGpOXY0EK8N_M_illvi5xi8s48.svg'
-                        },
-                        auth_date: '1755720767',
-                        signature: 'STtdzQn1FDAYTNqkpBQbdb9r_1stVLHyI_XaEvgJh8nvjBiie52_WpaGCtXKRFud0itNNW1jZV3YfXj4nrQmAw',
-                        hash: 'c6cdc525a482d255dc79ad389dc758a3b828cb91698bbb8c20b33c4cecef7c41'
-                    }
-                };
-        
-        const toastifyConfig = {
-            duration: 3000,
-            gravity: 'top',
-            position: 'right',
-            offset: {
-                y: 90
-            },
-            className: 'text-sm font-semibold text-white rounded-lg shadow-lg px-4 py-2 t-100',
-            stopOnFocus: true
+      const toastifyConfig = {
+        duration: 3000,
+        gravity: 'top',
+        position: 'right',
+        offset: {
+          y: 90,
+        },
+        className: 'text-sm font-semibold text-white rounded-lg shadow-lg px-4 py-2 t-100',
+        stopOnFocus: true,
+      };
+
+      const appState = {
+        currentSection: 'home',
+        userData: {
+          currency: 'SHIB',
+          hourlyTaskLimit: 0,
+          dailyTaskLimit: 0,
+          daysEarning: [],
+          referralEarnings: 0,
+          referralDirectBonus: 0,
+          minimumWithdrawal: 0,
+          withdrawalFee: 0,
+          adsReward: 0,
+          gigaId: '',
+          adexiumId: '',
+          moneyTagId: '',
+          gigaLimit: 0,
+          adexiumLimit: 0,
+          richAdsLimit: 0,
+          adexTraLimit: 0,
+          tgTasks: [],
+          directLinks: [],
+          directLinkCooldown: 0,
+          canClick: false,
+          adsPreviewTime: 0,
+          botLink: 'https://t.me/AdWorksyBot?startapp=' + tg.initDataUnsafe?.user?.id,
+
+          name: 'User',
+          photo_url: null,
+          balance: 0,
+          streak: 0,
+          totalEarned: 0,
+          totalEarnedPlusStreak: 0,
+          tasksCompleted: 0,
+          referredUsers: [],
+          lastCheckin: null,
+          isDayClaimable: false,
+          withdrawals: [],
+          todayTasks: 0,
+          hourlyTasks: 0,
+          lifetimeTasks: 0,
+        },
+      };
+
+      async function showAd() {
+        let a = localStorage.getItem('last-pop-show');
+        if (!a || (Date.now() - Number(a)) / 1000 > Number(appState.userData.adsPreviewTime)) {
+          try {
+            const moneyTagId = appState.userData.moneyTagId;
+            console.log('Showing Ad ', moneyTagId);
+            window[`show_${moneyTagId}`]();
+            localStorage.setItem('last-pop-show', Date.now());
+          } catch (e) {
+            console.log('error while showing Ad ', e);
+          }
+        }
+      }
+
+      function setupNavigation() {
+        document.querySelectorAll('.nav-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const section = btn.dataset.section;
+            showSection(section);
+          });
+        });
+      }
+
+      function showSection(sectionId) {
+
+        appState.currentSection = sectionId;
+
+        document.querySelectorAll('main > section').forEach((section) => {
+          section.classList.add('hidden');
+        });
+
+        if (sectionId !== 'offerwall'){
+          document.getElementById(`${sectionId}-section`).classList.remove('hidden');
+          document.querySelector('main').scrollTop = 0;
+        }
+
+        document.querySelectorAll('.nav-btn').forEach((btn) => {
+          btn.classList.remove('active-tab', 'text-purple-600');
+          btn.classList.add('text-gray-500');
+          if (btn.dataset.section === sectionId) {
+            btn.classList.add('active-tab', 'text-purple-600');
+            btn.classList.remove('text-gray-500');
+          };
+        });
+
+        if (sectionId === 'offerwall') {
+           tg.exitFullscreen();
+           return setUpOfferWall('show');
         };
+        showAd();
+      };
 
-        const appState = {
-            currentSection: 'home',
-            userData: {
-                currency: 'SHIB',
-                hourlyTaskLimit: 0,
-                dailyTaskLimit: 0,
-                daysEarning: [],
-                referralEarnings: 0,
-                referralDirectBonus: 0,
-                minimumWithdrawal: 0,
-                withdrawalFee: 0,
-                adsReward: 0,
-                gigaId: '',
-                adexiumId: '',
-                moneyTagId: '',
-                tgTasks: [],
-                adsPreviewTime: 2,
-                botLink: 'https://t.me/AdWorksyBot?startapp=' + tg.initDataUnsafe?.user?.id,
+      function renderCheckin() {
+        const progressPercent =
+          (appState.userData.streak / appState.userData.daysEarning.length) * 100;
+        document.getElementById('streak-progress').style.width =
+          `${Math.min(progressPercent, 100)}%`;
 
-                name: 'User',
-                photo_url: null,
-                balance: 0,
-                streak: 0,
-                totalEarned: 0,
-                totalEarnedPlusStreak: 0,
-                tasksCompleted: 0,
-                referredUsers: [],
-                lastCheckin: null,
-                isDayClaimable: false,
-                withdrawals: [],
-                todayTasks: 0,
-                hourlyTasks: 0,
-                lifetimeTasks: 0
-            }
-        };
-
-        async function showAd() {
-            let a = localStorage.getItem("last-pop-show");
-            if (!a || ((Date.now() - Number(a)) / 1000) > Number(appState.userData.adsPreviewTime)) {
-                try {
-                    const moneyTagId = appState.userData.moneyTagId;
-                    window[`show_${moneyTagId}`]();
-                    localStorage.setItem("last-pop-show", Date.now());
-                } catch (e) {
-                    console.log("error while showing Ad ", e);
-                }
-            }
-        }
-
-
-        function setupNavigation() {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const section = btn.dataset.section;
-                    showSection(section);
-                });
-            });
-        }
-
-
-        function showSection(sectionId) {
-
-            appState.currentSection = sectionId;
-
-            document.querySelectorAll("main > section").forEach((section) => {
-                section.classList.add("hidden");
-            });
-
-            document.getElementById(`${sectionId}-section`).classList.remove("hidden");
-            document.querySelector("main").scrollTop = 0;
-
-            document.querySelectorAll(".nav-btn").forEach((btn) => {
-                btn.classList.remove("active-tab", "text-purple-600");
-                btn.classList.add("text-gray-500");
-                if (btn.dataset.section === sectionId) {
-                    btn.classList.add("active-tab", "text-purple-600");
-                    btn.classList.remove("text-gray-500");
-                }
-            });
-
-            if (sectionId === "offerwall") {
-                // setUpOfferWall('show');
-            };
-
-            showAd();
-        }
-
-
-        function renderCheckin() {
-
-            const progressPercent = (appState.userData.streak / appState.userData.daysEarning.length) * 100;
-            document.getElementById('streak-progress').style.width = `${Math.min(progressPercent, 100)}%`;
-
-            const daysList = document.getElementById('days-list');
-            daysList.innerHTML = '';
-            appState.userData.daysEarning.forEach((earning, index) => {
-                const day = index + 1;
-                const isCurrent = day === appState.userData.streak && appState.userData.isDayClaimable;
-                const isCompleted = day < appState.userData.streak || (day === appState.userData.streak && !appState.userData.isDayClaimable);
-                const isFuture = day > appState.userData.streak && appState.userData.isDayClaimable;
-                const dayElement = document.createElement('div');
-                dayElement.className = `flex-none w-16 sm:w-20 p-2.5 rounded-xl text-center transition-transform duration-200 ${isCurrent ? 'bg-yellow-500/20 ring-2 ring-yellow-300 scale-105' :
-                    isCompleted ? 'bg-green-600/20' : 'bg-white/10'
-                    } hover:-translate-y-1 hover:shadow-md`;
-                dayElement.dataset.day = day;
-                dayElement.innerHTML = `
+        const daysList = document.getElementById('days-list');
+        daysList.innerHTML = '';
+        appState.userData.daysEarning.forEach((earning, index) => {
+          const day = index + 1;
+          const isCurrent = day === appState.userData.streak && appState.userData.isDayClaimable;
+          const isCompleted =
+            day < appState.userData.streak ||
+            (day === appState.userData.streak && !appState.userData.isDayClaimable);
+          const isFuture = day > appState.userData.streak && appState.userData.isDayClaimable;
+          const dayElement = document.createElement('div');
+          dayElement.className = `flex-none w-16 sm:w-20 p-2.5 rounded-xl text-center transition-transform duration-200 ${
+            isCurrent
+              ? 'bg-yellow-500/20 ring-2 ring-yellow-300 scale-105'
+              : isCompleted
+                ? 'bg-green-600/20'
+                : 'bg-white/10'
+          } hover:-translate-y-1 hover:shadow-md`;
+          dayElement.dataset.day = day;
+          dayElement.innerHTML = `
                             <div class="flex justify-center mb-1.5">
-                                <i class="fas ${isCompleted ? 'fa-check-circle text-green-400' :
-                        isCurrent ? 'fa-star text-yellow-300' : 'fa-lock text-white/50'
-                    } text-sm sm:text-base"></i>
+                                <i class="fas ${
+                                  isCompleted
+                                    ? 'fa-check-circle text-green-400'
+                                    : isCurrent
+                                      ? 'fa-star text-yellow-300'
+                                      : 'fa-lock text-white/50'
+                                } text-sm sm:text-base"></i>
                             </div>
-                            <span class="block text-xs font-medium ${isCurrent ? 'text-yellow-200' : isFuture ? 'text-white/60' : 'text-white/90'
-                    }">Day ${day}</span>
+                            <span class="block text-xs font-medium ${
+                              isCurrent
+                                ? 'text-yellow-200'
+                                : isFuture
+                                  ? 'text-white/60'
+                                  : 'text-white/90'
+                            }">Day ${day}</span>
                             <span class="block text-xs font-semibold">${Number(earning).toLocaleString()}</span>
                         `;
-                daysList.appendChild(dayElement);
-            });
+          daysList.appendChild(dayElement);
+        });
 
-            const checkinBtn = document.getElementById('checkin-btn');
-            const checkinText = document.getElementById('checkin-text');
+        const checkinBtn = document.getElementById('checkin-btn');
+        const checkinText = document.getElementById('checkin-text');
 
-            if (appState.userData.isDayClaimable) {
-                const reward = appState.userData.daysEarning[appState.userData.streak - 1] || appState.userData.daysEarning[0];
-                checkinText.innerHTML = `Claim ${Number(reward).toLocaleString()} ${appState.userData.currency}`;
-                checkinBtn.classList.remove('disabled', 'bg-gray-300', 'text-gray-500');
-                checkinBtn.classList.add('bg-yellow-400', 'text-indigo-900', 'pulsee');
-                checkinBtn.removeAttribute('aria-disabled');
-                checkinBtn.disabled = false;
-            } else {
-                checkinText.innerHTML = 'Wait For Next Day';
-                checkinBtn.classList.remove('bg-yellow-400', 'text-indigo-900', 'pulsee');
-                checkinBtn.classList.add('disabled', 'bg-gray-300', 'text-gray-500');
-                checkinBtn.setAttribute('aria-disabled', 'true');
-                checkinBtn.disabled = true;
-            }
+        if (appState.userData.isDayClaimable) {
+          const reward =
+            appState.userData.daysEarning[appState.userData.streak - 1] ||
+            appState.userData.daysEarning[0];
+          checkinText.innerHTML = `Claim ${Number(reward).toLocaleString()} ${appState.userData.currency}`;
+          checkinBtn.classList.remove('disabled', 'bg-gray-300', 'text-gray-500');
+          checkinBtn.classList.add('bg-yellow-400', 'text-indigo-900', 'pulsee');
+          checkinBtn.removeAttribute('aria-disabled');
+          checkinBtn.disabled = false;
+        } else {
+          checkinText.innerHTML = 'Wait For Next Day';
+          checkinBtn.classList.remove('bg-yellow-400', 'text-indigo-900', 'pulsee');
+          checkinBtn.classList.add('disabled', 'bg-gray-300', 'text-gray-500');
+          checkinBtn.setAttribute('aria-disabled', 'true');
+          checkinBtn.disabled = true;
         }
+      }
 
+      function updateElement(id, name) {
+        document.querySelectorAll('#' + id).forEach((element) => {
+          element.textContent = name;
+        });
+      }
 
-        function updateElement(id, name) {
-            document.querySelectorAll('#' + id).forEach(element => {
-                element.textContent = name;
-            });
-        }
+      function updateImage(id, logo) {
+        document.querySelectorAll('#' + id).forEach((element) => {
+          element.src = logo;
+        });
+      }
 
+      function timeAgo(createdAt) {
+        createdAt = new Date(createdAt);
+        const now = new Date();
+        const diffMs = now - createdAt;
 
-        function updateImage(id, logo) {
-            document.querySelectorAll('#' + id).forEach(element => {
-                element.src = logo;
-            });
-        }
+        const seconds = Math.floor(diffMs / 1000);
+        if (seconds < 60) return `Joined ${seconds} second${seconds !== 1 ? 's' : ''} ago`;
 
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `Joined ${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
 
-        function timeAgo(createdAt) {
-            createdAt = new Date(createdAt);
-            const now = new Date();
-            const diffMs = now - createdAt;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `Joined ${hours} hour${hours !== 1 ? 's' : ''} ago`;
 
-            const seconds = Math.floor(diffMs / 1000);
-            if (seconds < 60) return `Joined ${seconds} second${seconds !== 1 ? "s" : ""} ago`;
+        const days = Math.floor(hours / 24);
+        if (days < 30) return `Joined ${days} day${days !== 1 ? 's' : ''} ago`;
 
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `Joined ${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+        const months = Math.floor(days / 30);
+        if (months < 12) return `Joined ${months} month${months !== 1 ? 's' : ''} ago`;
 
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `Joined ${hours} hour${hours !== 1 ? "s" : ""} ago`;
+        const years = Math.floor(months / 12);
+        return `Joined ${years} year${years !== 1 ? 's' : ''} ago`;
+      }
 
-            const days = Math.floor(hours / 24);
-            if (days < 30) return `Joined ${days} day${days !== 1 ? "s" : ""} ago`;
+      function renderReferralEarnings() {
+        document.getElementById('referral-link').value = appState.userData.botLink;
+        const earningsContainer = document.getElementById('referral-earnings');
+        earningsContainer.innerHTML = '';
 
-            const months = Math.floor(days / 30);
-            if (months < 12) return `Joined ${months} month${months !== 1 ? "s" : ""} ago`;
-
-            const years = Math.floor(months / 12);
-            return `Joined ${years} year${years !== 1 ? "s" : ""} ago`;
-        }
-
-
-        function renderReferralEarnings() {
-            document.getElementById('referral-link').value = appState.userData.botLink;
-            const earningsContainer = document.getElementById("referral-earnings");
-            earningsContainer.innerHTML = "";
-
-            const searchContainer = document.createElement("div");
-            searchContainer.className = "mb-4";
-            searchContainer.innerHTML = `
+        const searchContainer = document.createElement('div');
+        searchContainer.className = 'mb-4';
+        searchContainer.innerHTML = `
                         <div class="relative">
                             <input 
                                 type="text" 
@@ -885,97 +1000,89 @@
                             </svg>
                         </div>
                     `;
-            earningsContainer.appendChild(searchContainer);
+        earningsContainer.appendChild(searchContainer);
 
-            // Create container for referral items
-            const referralsList = document.createElement("div");
-            referralsList.id = "referrals-list";
-            earningsContainer.appendChild(referralsList);
+        // Create container for referral items
+        const referralsList = document.createElement('div');
+        referralsList.id = 'referrals-list';
+        earningsContainer.appendChild(referralsList);
 
-            // Function to render referrals
-            function renderReferrals(filteredReferrals) {
-                referralsList.innerHTML = "";
+        // Function to render referrals
+        function renderReferrals(filteredReferrals) {
+          referralsList.innerHTML = '';
 
-                if (!Array.isArray(filteredReferrals) || filteredReferrals.length === 0) {
-                    referralsList.innerHTML =
-                        '<p class="text-sm text-gray-500 text-center py-4">No referrals found</p>';
-                    return;
-                }
+          if (!Array.isArray(filteredReferrals) || filteredReferrals.length === 0) {
+            referralsList.innerHTML =
+              '<p class="text-sm text-gray-500 text-center py-4">No referrals found</p>';
+            return;
+          }
 
-                filteredReferrals.forEach((refer) => {
-                    const div = document.createElement("div");
-                    div.className =
-                        "flex justify-between text-white items-center text-sm p-3 rounded-lg";
-                    div.innerHTML = `
+          filteredReferrals.forEach((refer) => {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between text-white items-center text-sm p-3 rounded-lg';
+            div.innerHTML = `
                                 <div class="flex items-center space-x-3">
                                     <div class="bg-blue-100 p-2 rounded-lg">
                                         <img 
-                                            src="${refer.photoUrl ||
-                        "https://placehold.co/24x24"
-                        }" 
-                                            alt="${refer.username
-                        }" 
+                                            src="${refer.photoUrl || 'https://placehold.co/24x24'}" 
+                                            alt="${refer.username}" 
                                             class="w-6 h-6 rounded-full object-cover"
                                             onerror="this.src='https://placehold.co/24x24'"
                                         >
                                     </div>
                                     <div>
                                         <p class="font-medium">${refer.name}</p>
-                                        <p class="text-xs text-gray-500">${refer.reward}% ${appState.userData.currency
-                        } on all tasks!</p>
+                                        <p class="text-xs text-gray-500">${refer.reward}% ${
+                                          appState.userData.currency
+                                        } on all tasks!</p>
                                     </div>
                                 </div>
                                 <span class="text-xs text-gray-500">${formatDate(
-                            refer.joinedAt
-                        )}</span>
+                                  refer.joinedAt,
+                                )}</span>
                             `;
-                    referralsList.appendChild(div);
-                });
-            }
-
-            // Initial render
-            renderReferrals(appState.userData.referredUsers);
-
-            // Search functionality (fixed)
-            const searchInput = document.getElementById("referral-search");
-            searchInput.addEventListener("input", (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                const filteredReferrals = appState.userData.referredUsers.filter(
-                    (refer) => {
-                        const username = refer?.username || "";
-                        const name = refer?.name || "";
-                        return (
-                            username.toLowerCase().includes(searchTerm) ||
-                            name.toLowerCase().includes(searchTerm)
-                        );
-                    }
-                );
-                renderReferrals(filteredReferrals);
-            });
-
-            // Date formatting helper function
-            function formatDate(dateString) {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffTime = Math.abs(now - date);
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-                if (diffDays === 0) return "Today";
-                if (diffDays === 1) return "Yesterday";
-                return `${diffDays} days ago`;
-            }
+            referralsList.appendChild(div);
+          });
         }
 
+        // Initial render
+        renderReferrals(appState.userData.referredUsers);
 
-        function renderWithdrawHistory() {
+        // Search functionality (fixed)
+        const searchInput = document.getElementById('referral-search');
+        searchInput.addEventListener('input', (e) => {
+          const searchTerm = e.target.value.toLowerCase();
+          const filteredReferrals = appState.userData.referredUsers.filter((refer) => {
+            const username = refer?.username || '';
+            const name = refer?.name || '';
+            return (
+              username.toLowerCase().includes(searchTerm) || name.toLowerCase().includes(searchTerm)
+            );
+          });
+          renderReferrals(filteredReferrals);
+        });
 
-            const historyContainer = document.getElementById("withdraw-history");
-            historyContainer.innerHTML = "";
+        // Date formatting helper function
+        function formatDate(dateString) {
+          const date = new Date(dateString);
+          const now = new Date();
+          const diffTime = Math.abs(now - date);
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-            // Create search bar
-            const searchContainer = document.createElement("div");
-            searchContainer.className = "mb-4";
-            searchContainer.innerHTML = `
+          if (diffDays === 0) return 'Today';
+          if (diffDays === 1) return 'Yesterday';
+          return `${diffDays} days ago`;
+        }
+      }
+
+      function renderWithdrawHistory() {
+        const historyContainer = document.getElementById('withdraw-history');
+        historyContainer.innerHTML = '';
+
+        // Create search bar
+        const searchContainer = document.createElement('div');
+        searchContainer.className = 'mb-4';
+        searchContainer.innerHTML = `
                         <div class="relative">
                             <input 
                                 type="text" 
@@ -988,41 +1095,38 @@
                             </svg>
                         </div>
                     `;
-            historyContainer.appendChild(searchContainer);
+        historyContainer.appendChild(searchContainer);
 
-            const withdrawalsList = document.createElement("div");
-            withdrawalsList.id = "withdrawals-list";
-            historyContainer.appendChild(withdrawalsList);
+        const withdrawalsList = document.createElement('div');
+        withdrawalsList.id = 'withdrawals-list';
+        historyContainer.appendChild(withdrawalsList);
 
-            function renderWithdrawals(filteredWithdrawals) {
-                withdrawalsList.innerHTML = "";
+        function renderWithdrawals(filteredWithdrawals) {
+          withdrawalsList.innerHTML = '';
 
-                if (
-                    !Array.isArray(filteredWithdrawals) ||
-                    filteredWithdrawals.length === 0
-                ) {
-                    withdrawalsList.innerHTML =
-                        '<p class="text-sm text-gray-500 text-center py-4">No withdrawals found</p>';
-                    return;
-                }
+          if (!Array.isArray(filteredWithdrawals) || filteredWithdrawals.length === 0) {
+            withdrawalsList.innerHTML =
+              '<p class="text-sm text-gray-500 text-center py-4">No withdrawals found</p>';
+            return;
+          }
 
-                filteredWithdrawals.forEach((withdrawal) => {
-                    const statusColor =
-                        withdrawal.status === "completed"
-                            ? "green"
-                            : withdrawal.status === "pending"
-                                ? "blue"
-                                : "red";
-                    const statusBg =
-                        withdrawal.status === "completed"
-                            ? "bg-green-100 text-green-700"
-                            : withdrawal.status === "pending"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-red-100 text-red-700";
-                    const div = document.createElement("div");
-                    div.className =
-                        "flex justify-between items-center text-sm p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200";
-                    div.innerHTML = `
+          filteredWithdrawals.forEach((withdrawal) => {
+            const statusColor =
+              withdrawal.status === 'completed'
+                ? 'green'
+                : withdrawal.status === 'pending'
+                  ? 'blue'
+                  : 'red';
+            const statusBg =
+              withdrawal.status === 'completed'
+                ? 'bg-green-100 text-green-700'
+                : withdrawal.status === 'pending'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'bg-red-100 text-red-700';
+            const div = document.createElement('div');
+            div.className =
+              'flex justify-between items-center text-sm p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200';
+            div.innerHTML = `
                                 <div class="flex items-center space-x-3">
                                     <img 
                                         src="/shiba-inu.png" 
@@ -1032,86 +1136,125 @@
                                     >
                                     <div>
                                         <p class="font-medium text-white">${Number(
-                        withdrawal?.amount || 0
-                    ).toFixed(2)} ${appState.userData.currency
-                        }</p>
+                                          withdrawal?.amount || 0,
+                                        ).toFixed(2)} ${appState.userData.currency}</p>
                                         <div class="flex items-center space-x-2 mt-1">
                                             <p class="text-xs text-gray-500">Transfer</p>
                                             <span class="${statusBg} text-xs font-medium px-2 py-0.5 rounded-full">
-                                                ${withdrawal.status
-                            .charAt(0)
-                            .toUpperCase() +
-                        withdrawal.status.slice(1)
-                        }
+                                                ${
+                                                  withdrawal.status.charAt(0).toUpperCase() +
+                                                  withdrawal.status.slice(1)
+                                                }
                                             </span>
-                                            <p class="text-xs text-gray-500 truncate max-w-[120px]">${withdrawal.address
-                        }</p>
+                                            <p class="text-xs text-gray-500 truncate max-w-[120px]">${
+                                              withdrawal.address
+                                            }</p>
                                         </div>
                                     </div>
                                 </div>
                                 <span class="text-xs text-gray-500">${formatDate(
-                            withdrawal.createdAt
-                        )}</span>
+                                  withdrawal.createdAt,
+                                )}</span>
                             `;
-                    withdrawalsList.appendChild(div);
-                });
-            }
-
-            renderWithdrawals(appState.userData.withdrawals);
-
-            const searchInput = document.getElementById("withdraw-search");
-            searchInput.addEventListener("input", (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                const filteredWithdrawals = appState.userData.withdrawals.filter(
-                    (withdrawal) =>
-                        (withdrawal.method_name?.toLowerCase() || "").includes(searchTerm) ||
-                        (withdrawal.address?.toLowerCase() || "").includes(searchTerm) ||
-                        (withdrawal.amount?.toString() || "").includes(searchTerm) ||
-                        (withdrawal.status?.toLowerCase() || "").includes(searchTerm) ||
-                        (formatDate(withdrawal.created_at) || "")
-                            .toLowerCase()
-                            .includes(searchTerm)
-                );
-                renderWithdrawals(filteredWithdrawals);
-            });
-
-            function formatDate(dateString) {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffTime = Math.abs(now - date);
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-                if (diffDays === 0) return "Today";
-                if (diffDays === 1) return "Yesterday";
-                return `${diffDays} days ago`;
-            }
+            withdrawalsList.appendChild(div);
+          });
         }
 
+        renderWithdrawals(appState.userData.withdrawals);
 
-        function updateTasks() {
-            const noTask = document.querySelector("#no-task");
-            const { tgTasks } = appState.userData;
+        const searchInput = document.getElementById('withdraw-search');
+        searchInput.addEventListener('input', (e) => {
+          const searchTerm = e.target.value.toLowerCase();
+          const filteredWithdrawals = appState.userData.withdrawals.filter(
+            (withdrawal) =>
+              (withdrawal.method_name?.toLowerCase() || '').includes(searchTerm) ||
+              (withdrawal.address?.toLowerCase() || '').includes(searchTerm) ||
+              (withdrawal.amount?.toString() || '').includes(searchTerm) ||
+              (withdrawal.status?.toLowerCase() || '').includes(searchTerm) ||
+              (formatDate(withdrawal.created_at) || '').toLowerCase().includes(searchTerm),
+          );
+          renderWithdrawals(filteredWithdrawals);
+        });
 
-            if (tgTasks.length === 0) {
-                return noTask.style.display = 'block';
-            }
+        function formatDate(dateString) {
+          const date = new Date(dateString);
+          const now = new Date();
+          const diffTime = Math.abs(now - date);
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-            noTask.style.display = 'none';
+          if (diffDays === 0) return 'Today';
+          if (diffDays === 1) return 'Yesterday';
+          return `${diffDays} days ago`;
+        }
+      }
 
-            const tasksDiv = document.getElementById("tasks-div");
+      function renderDirectLinks(){
+        const links = appState.userData.directLinks || [];
+        if (links.length === 0) return;
+        document.querySelectorAll('.direct-link').forEach((e) => {
+          e.remove();
+        });
+        const house = document.getElementById('housing');
+        for (const link of links){ 
+          const a = document.createElement('a');
+          a.classList.add('direct-link');
+          if (!appState.userData.canClick){
+            a.classList.add('pointer-events-none', 'opacity-50');
+          };
+          a.href = link;
+          a.innerHTML = `
+              <button
+                class="w-full bg-purple-600/40 text-white font-bold py-4 rounded-xl shadow-md hover:opacity-80 mt-5"
+              >
+                <i class="fa fa-link"></i>
+                Visit Link (
+                <i class="fas fa-gift"></i>
+                10 SHIB)
+              </button>`;
+            house.appendChild(a);
+        };
 
-            Array.from(document.getElementsByClassName("task-card")).forEach(e => {
-                e.remove();
-            })
+        document.querySelectorAll('.direct-link').forEach((link) => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const url = link.href;
+            showLink('link', e);
+          });
+        });
+      };
 
-            for (const task of tgTasks) {
-                let { taskId, username, reward, type } = task;
-                username = type === 'tg' ? username : username.split('//')[1];
+      function updateTasks() {
+        const noTask = document.querySelector('#no-task');
+        const { tgTasks } = appState.userData;
 
-                const div = document.createElement("div");
-                div.classList.add("task-card", "bg-[#181818]", "p-4", "rounded-xl", "border", "border-purple-600/20", "shadow-xs");
+        if (tgTasks.length === 0) {
+          return (noTask.style.display = 'block');
+        }
 
-                div.innerHTML = `
+        noTask.style.display = 'none';
+
+        const tasksDiv = document.getElementById('tasks-div');
+
+        Array.from(document.getElementsByClassName('task-card')).forEach((e) => {
+          e.remove();
+        });
+
+        for (const task of tgTasks) {
+          let { taskId, username, reward, type } = task;
+          username = type === 'tg' ? username : username.split('//')[1];
+
+          const div = document.createElement('div');
+          div.classList.add(
+            'task-card',
+            'bg-[#181818]',
+            'p-4',
+            'rounded-xl',
+            'border',
+            'border-purple-600/20',
+            'shadow-xs',
+          );
+
+          div.innerHTML = `
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <h4 class="font-semibold text-sm text-white">
@@ -1139,665 +1282,665 @@
                                 </button>
                             </div>
 `;
-                tasksDiv.appendChild(div);
-
-            }
-
-
-            document.querySelectorAll(".verify-task-btn").forEach((button) => {
-                button.addEventListener("click", () => {
-
-                    const taskId = button.getAttribute("data-task-id");
-                    button.disabled = true;
-                    button.classList.add("opacity-50", "cursor-not-allowed");
-
-                    axios.post("/verify-task", { tg, taskId })
-                        .then((data) => {
-                            const { status, txt, reward } = data.data;
-                            if (status) {
-                                appState.userData.balance += Number(reward);
-                                appState.userData.totalEarned += Number(reward);
-                                appState.userData.lifetimeTasks =
-                                    (appState.userData.lifetimeTasks || 0) + 1;
-                                appState.userData.tgTasks = appState.userData.tgTasks.filter(t => t.taskId != taskId);
-
-                                updateUserData();
-
-                                Toastify({
-                                    ...toastifyConfig,
-                                    text:
-                                        data.message ||
-                                        `🎉 Task completed. You earned ${reward} ${appState.userData.currency}!`,
-                                    'style.background': "linear-gradient(to right, #4f46e5, #3b82f6)",
-                                }).showToast();
-                            } else {
-                                Toastify({
-                                    ...toastifyConfig,
-                                    text:
-                                        txt ||
-                                        "Failed to verify task. Please join the channel first.",
-                                    'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                                }).showToast();
-                            }
-                        })
-                        .catch((error) => {
-                            console.error("Fetch Error:", error.response);
-                            Toastify({
-                                ...toastifyConfig,
-                                text: "An error occurred. Please try again.",
-                                'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                            }).showToast();
-                        })
-                        .finally(() => {
-                            button.disabled = false;
-                            button.classList.remove("opacity-50", "cursor-not-allowed");
-                        });
-                });
-            });
+          tasksDiv.appendChild(div);
         }
 
+        document.querySelectorAll('.verify-task-btn').forEach((button) => {
+          button.addEventListener('click', () => {
+            const taskId = button.getAttribute('data-task-id');
+            button.disabled = true;
+            button.classList.add('opacity-50', 'cursor-not-allowed');
 
-        function updateUserData() {
-            if (appState.userData.photo_url) {
-                updateImage('user-avatar', appState.userData.photo_url);
-            }
-            updateElement('streak', appState.userData.streak);
-            updateElement('total-earning', Number(appState.userData.totalEarned).toLocaleString());
-            updateElement('total-earned', (Number(appState.userData.totalEarned) + Number(appState.userData.totalEarnedPlusStreak)).toLocaleString());
-            updateElement('currency', appState.userData.currency);
-            updateElement('user-name', appState.userData.name);
-            updateElement('user-balance', Number(appState.userData.balance).toLocaleString());
-            updateElement('adsReward', Number(appState.userData.adsReward).toLocaleString());
-            updateElement('minimum-withdrawal', Number(appState.userData.minimumWithdrawal).toLocaleString());
-            updateElement('withdrawal-fee', Number(appState.userData.withdrawalFee).toLocaleString());
-            updateElement('date-joined', timeAgo(appState.userData.createdAt));
-            updateElement('refer-commision', Number(appState.userData.referralEarnings));
-            updateElement('refer-direct-bonus', Number(appState.userData.referralDirectBonus));
-            updateElement('refer-count', appState.userData.referredUsers.length);
-            updateElement('daily-tasks-limit', `Limit: ${appState.userData.dailyTaskLimit} tasks/day`);
-            updateElement('today-tasks', appState.userData.todayTasks);
-            updateElement('hourly-tasks-limit', `Limit: ${appState.userData.hourlyTaskLimit} tasks/hour`);
-            updateElement('hourly-tasks', appState.userData.hourlyTasks);
-            updateElement('lifetime-completed-tasks', appState.userData.lifetimeTasks);
-            updateElement('total-earnings', Number(appState.userData.totalEarned).toLocaleString());
-            document.getElementById('daily-progress').style.width = `${Math.min((appState.userData.todayTasks / appState.userData.dailyTaskLimit) * 100, 100)}%`;
-            document.getElementById('hourly-progress').style.width = `${Math.min((appState.userData.hourlyTasks / appState.userData.hourlyTaskLimit) * 100, 100)}%`;
-            const showAdsButton = document.getElementById('show_ad');
-            if (appState.userData.todayTasks >= appState.userData.dailyTaskLimit) {
-                showAdsButton.textContent = 'Daily Limit Reached';
-                showAdsButton.classList.add('disabled', 'opacity-50', 'cursor-not-allowed');
-                showAdsButton.disabled = true;
-            } else if (appState.userData.hourlyTasks >= appState.userData.hourlyTaskLimit) {
-                showAdsButton.textContent = 'Hourly Limit Reached';
-                showAdsButton.classList.add('disabled', 'opacity-50', 'cursor-not-allowed');
-                showAdsButton.disabled = true;
-            } else {
-                showAdsButton.innerHTML = '<i class="fas fa-ad"></i>  Start Task';
-                showAdsButton.classList.remove('disabled', 'opacity-50', 'cursor-not-allowed');
-                showAdsButton.disabled = false;
-            }
-            renderCheckin();
-            updateTasks();
-            renderReferralEarnings();
-            renderWithdrawHistory();
-        }
+            axios
+              .post('/verify-task', { tg, taskId })
+              .then((data) => {
+                const { status, txt, reward } = data.data;
+                if (status) {
+                  appState.userData.balance += Number(reward);
+                  appState.userData.totalEarned += Number(reward);
+                  appState.userData.lifetimeTasks = (appState.userData.lifetimeTasks || 0) + 1;
+                  appState.userData.tgTasks = appState.userData.tgTasks.filter(
+                    (t) => t.taskId != taskId,
+                  );
 
+                  updateUserData();
 
-        function resetShowedAds() {
-            localStorage.setItem('showedProvider', JSON.stringify({
-                giga: 0,
-                moneyTag: 0,
-                adexium: 0,
-                richAds: 0,
-                adexTra: 0
-            }));
-        }
-
-
-        async function showLink(type, e, feedback) {
-            e.preventDefault();
-            if (window.__linkRewardShowing) {
-                return alert("Currently proccessing one!");
-            }
-            window.__linkRewardShowing = true;
-            const ele = e.currentTarget;
-            const url = ele.href;
-            const start = Date.now();
-            window.open(url, "_blank", "noopener,noreferrer");
-
-            const timeSpent = await new Promise(async (resolve, reject) => {
-                const processIt = () => {
-                    if (document.visibilityState === "visible") {
-                        document.removeEventListener("visibilitychange", processIt);
-                        resolve(Math.floor((Date.now() - start) / 1000));
-                    };
-                }
-                document.addEventListener("visibilitychange", processIt);
-            });
-
-            try {
-                if (timeSpent < 15) {
-                    alert("Sorry, you used " + timeSpent + " secs . You need to use atleast 15 secs");
-                    return;
-                }
-                if (feedback) {
-                    const unlockId = ele.dataset.unlock;
-                    const btn = document.querySelector(`[data-task-id="${unlockId}"]`);
-                    btn.disabled = false;
-                    btn.classList.remove("opacity-50", "cursor-not-allowed");
-                    Toastify({
-                        ...toastifyConfig,
-                        text: 'Reward Unlocked!',
-                        'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)'
-                    }).showToast();
-                    return;
-                };
-                Toastify({
+                  Toastify({
                     ...toastifyConfig,
-                    text: 'Processing link reward!',
-                    'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)'
-                }).showToast();
-                tg.type = type;
-                const r = await axios.post("/link-reward", { tg });
-                const { reward, text } = r.data;
-                if (reward && text) {
-                    Toastify({
-                        ...toastifyConfig,
-                        text,
-                        'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)'
-                    }).showToast();
-                    appState.userData.balance += reward;
-                    appState.userData.totalEarnedPlusStreak += reward;
-                    updateUserData();
+                    text:
+                      data.message ||
+                      `🎉 Task completed. You earned ${reward} ${appState.userData.currency}!`,
+                    'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+                  }).showToast();
                 } else {
-                    Toastify({
-                        ...toastifyConfig,
-                        text: 'Incompleted reward process!',
-                        'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)'
-                    }).showToast();
-                }
-            } catch (e) {
-                console.log(e);
-                Toastify({
+                  Toastify({
                     ...toastifyConfig,
-                    text: 'Error processing link reward!',
-                    'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)'
+                    text: txt || 'Failed to verify task. Please join the channel first.',
+                    'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+                  }).showToast();
+                }
+              })
+              .catch((error) => {
+                console.error('Fetch Error:', error.response);
+                Toastify({
+                  ...toastifyConfig,
+                  text: 'An error occurred. Please try again.',
+                  'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
                 }).showToast();
-            } finally {
-                window.__linkRewardShowing = false;
-            }
+              })
+              .finally(() => {
+                button.disabled = false;
+                button.classList.remove('opacity-50', 'cursor-not-allowed');
+              });
+          });
+        });
+      }
+
+      function updateUserData() {
+        if (appState.userData.photo_url) {
+          updateImage('user-avatar', appState.userData.photo_url);
+        }
+        updateElement('streak', appState.userData.streak);
+        updateElement('total-earning', Number(appState.userData.totalEarned).toLocaleString());
+        updateElement(
+          'total-earned',
+          (
+            Number(appState.userData.totalEarned) + Number(appState.userData.totalEarnedPlusStreak)
+          ).toLocaleString(),
+        );
+        updateElement('currency', appState.userData.currency);
+        updateElement('user-name', appState.userData.name);
+        updateElement('user-balance', Number(appState.userData.balance).toLocaleString());
+        updateElement('adsReward', Number(appState.userData.adsReward).toLocaleString());
+        updateElement(
+          'minimum-withdrawal',
+          Number(appState.userData.minimumWithdrawal).toLocaleString(),
+        );
+        updateElement('withdrawal-fee', Number(appState.userData.withdrawalFee).toLocaleString());
+        updateElement('date-joined', timeAgo(appState.userData.createdAt));
+        updateElement('refer-commision', Number(appState.userData.referralEarnings));
+        updateElement('refer-direct-bonus', Number(appState.userData.referralDirectBonus));
+        updateElement('refer-count', appState.userData.referredUsers.length);
+        updateElement('daily-tasks-limit', `Limit: ${appState.userData.dailyTaskLimit} tasks/day`);
+        updateElement('today-tasks', appState.userData.todayTasks);
+        updateElement(
+          'hourly-tasks-limit',
+          `Limit: ${appState.userData.hourlyTaskLimit} tasks/hour`,
+        );
+        updateElement('hourly-tasks', appState.userData.hourlyTasks);
+        updateElement('lifetime-completed-tasks', appState.userData.lifetimeTasks);
+        updateElement('total-earnings', Number(appState.userData.totalEarned).toLocaleString());
+        document.getElementById('daily-progress').style.width =
+          `${Math.min((appState.userData.todayTasks / appState.userData.dailyTaskLimit) * 100, 100)}%`;
+        document.getElementById('hourly-progress').style.width =
+          `${Math.min((appState.userData.hourlyTasks / appState.userData.hourlyTaskLimit) * 100, 100)}%`;
+        const showAdsButton = document.getElementById('show_ad');
+        if (appState.userData.todayTasks >= appState.userData.dailyTaskLimit) {
+          showAdsButton.textContent = 'Daily Limit Reached';
+          showAdsButton.classList.add('disabled', 'opacity-50', 'cursor-not-allowed');
+          showAdsButton.disabled = true;
+        } else if (appState.userData.hourlyTasks >= appState.userData.hourlyTaskLimit) {
+          showAdsButton.textContent = 'Hourly Limit Reached';
+          showAdsButton.classList.add('disabled', 'opacity-50', 'cursor-not-allowed');
+          showAdsButton.disabled = true;
+        } else {
+          showAdsButton.innerHTML = '<i class="fas fa-ad"></i>  Start Task';
+          showAdsButton.classList.remove('disabled', 'opacity-50', 'cursor-not-allowed');
+          showAdsButton.disabled = false;
         }
 
+        renderDirectLinks();
+        renderCheckin();
+        updateTasks();
+        renderReferralEarnings();
+        renderWithdrawHistory();
+      }
 
-        async function setUpOfferWall(t) {
+      function resetShowedAds() {
+        localStorage.setItem(
+          'showedProvider',
+          JSON.stringify({
+            giga: 0,
+            adexium: 0,
+            richAds: 0,
+            adexTra: 0,
+          }),
+        );
+      }
 
-            if (t === 'load') {
-                try {
-                    window.kingstarOfferWall = await window.loadOfferWallSDK({
-                        projectId: '960'
-                    });
-                } catch (e) {
-                    window.kingstarOfferWall = null;
-                    alert("Initializing offerwall SDK! " + e);
-                }
-                return;
-            }
-
-            if (t === 'show') {
-                if (!window.kingstarOfferWall) {
-                    return alert("Offerwall SDK hasn't been initialized!");
-                }
-
-                try {
-                    window.kingstarOfferWall.open();
-                } catch (e) {
-
-                }
-            }
-
+      async function showLink(type, e, feedback) {
+        e.preventDefault();
+        if (window.__linkRewardShowing) {
+          return alert('Currently proccessing one!');
         }
+        window.__linkRewardShowing = true;
+        const ele = e.currentTarget;
+        const url = ele.href;
+        const start = Date.now();
+        window.open(url, '_blank', 'noopener,noreferrer');
 
+        const timeSpent = await new Promise(async (resolve, reject) => {
+          const processIt = () => {
+            if (document.visibilityState === 'visible') {
+              document.removeEventListener('visibilitychange', processIt);
+              resolve(Math.floor((Date.now() - start) / 1000));
+            }
+          };
+          document.addEventListener('visibilitychange', processIt);
+        });
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            tg.showPopup({
-                title: 'Log Out',
-                message: 'Are you sure you want to log out?',
-                buttons: [{
-                    id: 'cancel',
-                    type: 'cancel'
-                }, {
-                    id: 'logout',
-                    type: 'destructive',
-                    text: 'Log Out'
-                }]
-            }, (buttonId) => {
-                if (buttonId === 'logout') {
-                    tg.close();
-                }
+        try {
+          if (timeSpent < 5) {
+            alert('Sorry, you used ' + timeSpent + ' secs . You need to use atleast 5 secs');
+            return;
+          }
+          if (feedback) {
+            const unlockId = ele.dataset.unlock;
+            const btn = document.querySelector(`[data-task-id="${unlockId}"]`);
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            Toastify({
+              ...toastifyConfig,
+              text: 'Reward Unlocked!',
+              'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+            }).showToast();
+            return;
+          };
+          Toastify({
+            ...toastifyConfig,
+            text: 'Processing link reward!',
+            'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+          }).showToast();
+          tg.type = type;
+          const r = await axios.post('/link-reward', { tg });
+          const { reward, text } = r.data;
+          if (reward && text) {
+            Toastify({
+              ...toastifyConfig,
+              text,
+              'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+            }).showToast();
+            appState.userData.balance += reward;
+            appState.userData.totalEarnedPlusStreak += reward;
+            updateUserData();
+          } else {
+            Toastify({
+              ...toastifyConfig,
+              text: 'Incompleted reward process!',
+              'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+            }).showToast();
+          }
+        } catch (e) {
+          console.log(e);
+          Toastify({
+            ...toastifyConfig,
+            text: e.response.data || 'Error processing link reward!',
+            'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+          }).showToast();
+        } finally {
+          window.__linkRewardShowing = false;
+        }
+      }
+
+      async function setUpOfferWall(t) {
+        if (t === 'load') {
+          try {
+            window.kingstarOfferWall = await window.loadOfferWallSDK({
+              projectId: '960',
             });
-        });
+          } catch (e) {
+            window.kingstarOfferWall = null;
+            console.log('Initializing offerwall SDK! ' + e);
+          }
+          return;
+        }
 
+        if (t === 'show') {
+          if (!window.kingstarOfferWall) {
+            return alert("Offerwall SDK hasn't been initialized!");
+          }
 
-        document.getElementById('copy-referral').addEventListener('click', () => {
-            const referralInput = document.getElementById('referral-link');
-            referralInput.select();
-            document.execCommand('copy');
-            Toastify({
-                ...toastifyConfig,
-                text: 'Referral link copied to clipboard!',
-                'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)'
-            }).showToast();
-        });
-
-
-        document.getElementById("checkin-btn").addEventListener("click", async () => {
-            Toastify({
-                ...toastifyConfig,
-                text: "Claiming checkin bonus...",
-                "style.background": "linear-gradient(to right, #4f46e5, #3b82f6)",
-            }).showToast();
-            try {
-                const r = await axios.post('/claim-checkin', { tg });
-                const { reward, lastCheckin, text } = r.data
-                Toastify({
-                    ...toastifyConfig,
-                    text: text,
-                    "style.background": "linear-gradient(to right, #4f46e5, #3b82f6)",
-                }).showToast();
-                appState.userData.isDayClaimable = false;
-                appState.userData.lastCheckin = lastCheckin;
-                appState.userData.balance = Number(appState.userData.balance) + Number(reward);
-                appState.userData.totalEarnedPlusStreak = Number(appState.userData.totalEarnedPlusStreak) + Number(reward);
-                updateUserData();
-            } catch (e) {
-                console.error("Fetch Error:", e);
-                Toastify({
-                    ...toastifyConfig,
-                    text: e.response.data,
-                    'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-            }
-        });
-
-
-        document.getElementById("withdraw-btn").addEventListener("click", () => {
-            const withdrawButton = document.getElementById("withdraw-btn");
-            const amount = parseInt(document.getElementById("withdraw-amount").value);
-            const address = document.getElementById("withdraw-address").value.trim();
-
-            if (isNaN(amount)) {
-                Toastify({
-                    ...toastifyConfig,
-                    text: "Please enter a valid amount",
-                    "style.background": "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-                return;
-            }
-
-            if (amount < Number(appState.userData.minimumWithdrawal)) {
-                Toastify({
-                    ...toastifyConfig,
-                    text: `Minimum withdrawal amount is ${appState.userData.minimumWithdrawal} ${appState.userData.currency}!`,
-                    "style.background": "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-                return;
-            }
-
-            if (amount > appState.userData.balance) {
-                Toastify({
-                    ...toastifyConfig,
-                    text: "You don't have enough balance",
-                    "style.background": "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-                return;
-            }
-
-
-
-            if (!address) {
-                Toastify({
-                    ...toastifyConfig,
-                    text: "Please enter a withdrawal address",
-                    "style.background": "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-                return;
-            }
-
-            document.getElementById("form-amount").value = amount;
-            document.getElementById("form-method-id").value = "Cryptocurrency";
-            document.getElementById("form-address").value = address;
-
-            withdrawButton.disabled = true;
-            withdrawButton.classList.add("opacity-50", "cursor-not-allowed");
-
-
-
-            axios.post("/request-withdraw", {
-                tg,
-                amount,
-                address
-            })
-                .then((res) => {
-                    const data = res.data;
-
-                    if (data.status) {
-                        appState.userData.balance -= amount;
-                        appState.userData.withdrawals.unshift({
-                            amount,
-                            status: "pending",
-                            address,
-                            createdAt: new Date()
-                        });
-                        updateUserData();
-                        Toastify({
-                            ...toastifyConfig,
-                            text: `Withdrawal request for ${amount} ${appState.userData.currency} to ${address} has been submitted.`,
-                            "style.background": "linear-gradient(to right, #4f46e5, #3b82f6)",
-                        }).showToast();
-                    } else {
-                        Toastify({
-                            ...toastifyConfig,
-                            text: data.message || "Withdrawal request failed. Please try again.",
-                            "style.background": "linear-gradient(to right, #dc2626, #b91c1c)",
-                        }).showToast();
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                    Toastify({
-                        ...toastifyConfig,
-                        text: "An error occurred. Please try again later.",
-                        "style.background": "linear-gradient(to right, #dc2626, #b91c1c)",
-                    }).showToast();
-                })
-                .finally(() => {
-                    withdrawButton.disabled = false;
-                    withdrawButton.classList.remove("opacity-50", "cursor-not-allowed");
-                });
-        });
-
-
-        document.querySelector("#show_ad").addEventListener("click", async (element) => {
-
-            const adsProviders = {
-                giga: 2,
-                moneyTag: 2,
-                adexium: 2,
-                richAds: 2
-            }
-            const moneyTagId = appState.userData.moneyTagId;
-
-            if (appState.userData.hourlyTasks === 0) {
-                resetShowedAds();
-            }
-
-            const showed = localStorage.getItem('showedProvider');
-            if (!showed) {
-
-                Toastify({
-                    ...toastifyConfig,
-                    text: `Ads provider data not initiated!`,
-                    'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-
-                return;
-            }
-
-            let showedProvider = JSON.parse(showed);
-            console.log('Showed providers:', showedProvider);
-
-
-            let provider = adsProviders.giga > showedProvider.giga ? 'giga' :
-                adsProviders.moneyTag > showedProvider.moneyTag ? 'moneyTag' :
-                    adsProviders.adexium > showedProvider.adexium ? 'adexium' :
-                        adsProviders.richAds > showedProvider.richAds ? 'richAds' : null;
-
-            if (!provider) {
-                Toastify({
-                    ...toastifyConfig,
-                    text: `You have reached the maximum number of ads for this hour. Please try again later.`,
-                    'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-                return;
-            }
-
-            element.target.disabled = true;
-            let watched;
-            let adId;
-
-            console.log(provider);
-
-            try {
-                if (provider === 'giga') {
-
-                    const aa = await window.showGiga();
-                    console.log("Giga result: ", aa);
-                    if (aa) {
-                        watched = true;
-                        showedProvider.giga += 1;
-                    }
-
-                } else if (provider === 'moneyTag') {
-
-                    const aa = await window[`show_${moneyTagId}`]();
-                    console.log("MoneyTag result: ", aa);
-                    if (aa) {
-                        watched = true;
-                        showedProvider.moneyTag += 1;
-                    }
-
-                } else if (provider === 'adexium') {
-
-                    const adexiumAds = new AdexiumWidget({ wid: 'e8531f16-1667-45d7-b801-5d2b232640bc', adFormat: 'interstitial', debug: true });
-                    adexiumAds.requestAd('interstitial');
-
-                    await new Promise((resolve, reject) => {
-
-                        adexiumAds.on('adReceived', async (ad) => {
-                            adId = ad.id;
-                            adexiumAds.displayAd(ad);
-                        });
-
-
-                        adexiumAds.on('adPlaybackCompleted', () => {
-                            watched = true;
-                            showedProvider.adexium += 1;
-                            resolve();
-                        });
-
-                        adexiumAds.on('noAdFound', () => {
-                            reject("No AD found. Please re-try later!");
-                        });
-
-                    });
-
-                } else if (provider === 'richAds') {
-
-                    window.richardAds = new TelegramAdsController();
-                    await window.richardAds.initialize({
-                        pubId: "982571",
-                        appId: "3137",
-                    });
-
-                    const aa = await window.richardAds.triggerInterstitialVideo();
-                    console.log("RichAds result: ", aa);
-
-                    if (aa) {
-                        watched = true;
-                        showedProvider.richAds += 1;
-                    }
-
-
-                }
-
-            } catch (e) {
-                console.log(e)
-                element.target.disabled = false;
-                Toastify({
-                    ...toastifyConfig,
-                    text: e || `Error while loading ads. Please try again later.`,
-                    'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-                return;
-            }
-
-            try {
-
-                console.log(watched);
-
-                if (!watched) {
-                    Toastify({
-                        ...toastifyConfig,
-                        text: `Sorry ads failed. No reward received!`,
-                        'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                    }).showToast();
-                    return;
-                }
-
-                const rr = await axios.post('/ads-reward', { tg, provider });
-                console.log(rr.data);
-                const { status, reward, message } = rr.data;
-
-                if (!status) {
-                    throw new Error();
-                }
-
-                localStorage.setItem('showedProvider', JSON.stringify(showedProvider));
-
-                appState.userData.balance += reward;
-                appState.userData.totalEarned += reward;
-                appState.userData.totalEarnedPlusStreak += reward;
-                appState.userData.todayTasks += 1;
-                appState.userData.hourlyTasks += 1;
-                appState.userData.lifetimeTasks += 1;
-                updateUserData();
-
-                Toastify({
-                    ...toastifyConfig,
-                    text: message || "Ad rewarded!",
-                    'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-
-            } catch (e) {
-                console.log("Error processing ads reward for user ", e);
-                Toastify({
-                    ...toastifyConfig,
-                    text: e.response.data || "Error verifying Ad!",
-                    'style.background': "linear-gradient(to right, #dc2626, #b91c1c)",
-                }).showToast();
-
-            } finally {
-                element.target.disabled = false;
-            }
-        });
-
-
-        document.addEventListener('DOMContentLoaded', async () => {
-
-            try {
-                tg.backgroundColor = '#1c1c1c';
-                tg.headerColor = '#1c1c1c';
-                tg.BackButton.hide();
+          try {
+            window.kingstarOfferWall.open();
+            window.kingstarOfferWall.on('closed', () => {
                 tg.requestFullscreen();
-                tg.disableVerticalSwipes();
-            } catch (e) {
-            }
+                showSection("home");
+            });
+          } catch (e) {}
+        }
+      }
 
-            if (tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                appState.userData.name = `${user.first_name} ${user.last_name}`
-                appState.userData.photo_url = user.photo_url;
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        tg.showPopup(
+          {
+            title: 'Log Out',
+            message: 'Are you sure you want to log out?',
+            buttons: [
+              {
+                id: 'cancel',
+                type: 'cancel',
+              },
+              {
+                id: 'logout',
+                type: 'destructive',
+                text: 'Log Out',
+              },
+            ],
+          },
+          (buttonId) => {
+            if (buttonId === 'logout') {
+              tg.close();
+            }
+          },
+        );
+      });
+
+      document.getElementById('copy-referral').addEventListener('click', () => {
+        const referralInput = document.getElementById('referral-link');
+        referralInput.select();
+        document.execCommand('copy');
+        Toastify({
+          ...toastifyConfig,
+          text: 'Referral link copied to clipboard!',
+          'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+        }).showToast();
+      });
+
+      document.getElementById('checkin-btn').addEventListener('click', async () => {
+        Toastify({
+          ...toastifyConfig,
+          text: 'Claiming checkin bonus...',
+          'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+        }).showToast();
+        try {
+          const r = await axios.post('/claim-checkin', { tg });
+          const { reward, lastCheckin, text } = r.data;
+          Toastify({
+            ...toastifyConfig,
+            text: text,
+            'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+          }).showToast();
+          appState.userData.isDayClaimable = false;
+          appState.userData.lastCheckin = lastCheckin;
+          appState.userData.balance = Number(appState.userData.balance) + Number(reward);
+          appState.userData.totalEarnedPlusStreak =
+            Number(appState.userData.totalEarnedPlusStreak) + Number(reward);
+          updateUserData();
+        } catch (e) {
+          console.error('Fetch Error:', e);
+          Toastify({
+            ...toastifyConfig,
+            text: e.response.data,
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+        }
+      });
+
+      document.getElementById('withdraw-btn').addEventListener('click', () => {
+        const withdrawButton = document.getElementById('withdraw-btn');
+        const amount = parseInt(document.getElementById('withdraw-amount').value);
+        const address = document.getElementById('withdraw-address').value.trim();
+
+        if (isNaN(amount)) {
+          Toastify({
+            ...toastifyConfig,
+            text: 'Please enter a valid amount',
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+          return;
+        }
+
+        if (amount < Number(appState.userData.minimumWithdrawal)) {
+          Toastify({
+            ...toastifyConfig,
+            text: `Minimum withdrawal amount is ${appState.userData.minimumWithdrawal} ${appState.userData.currency}!`,
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+          return;
+        }
+
+        if (amount > appState.userData.balance) {
+          Toastify({
+            ...toastifyConfig,
+            text: "You don't have enough balance",
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+          return;
+        }
+
+        if (!address) {
+          Toastify({
+            ...toastifyConfig,
+            text: 'Please enter a withdrawal address',
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+          return;
+        }
+
+        document.getElementById('form-amount').value = amount;
+        document.getElementById('form-method-id').value = 'Cryptocurrency';
+        document.getElementById('form-address').value = address;
+
+        withdrawButton.disabled = true;
+        withdrawButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+        axios
+          .post('/request-withdraw', {
+            tg,
+            amount,
+            address,
+          })
+          .then((res) => {
+            const data = res.data;
+
+            if (data.status) {
+              appState.userData.balance -= amount;
+              appState.userData.withdrawals.unshift({
+                amount,
+                status: 'pending',
+                address,
+                createdAt: new Date(),
+              });
+              updateUserData();
+              Toastify({
+                ...toastifyConfig,
+                text: `Withdrawal request for ${amount} ${appState.userData.currency} to ${address} has been submitted.`,
+                'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
+              }).showToast();
             } else {
-                document.body.innerHTML = '<h1 class="text-center text-red-500 mt-20">Telegram Web App is not ready</h1>';
-                return;
+              Toastify({
+                ...toastifyConfig,
+                text: data.message || 'Withdrawal request failed. Please try again.',
+                'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+              }).showToast();
             }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            Toastify({
+              ...toastifyConfig,
+              text: 'An error occurred. Please try again later.',
+              'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+            }).showToast();
+          })
+          .finally(() => {
+            withdrawButton.disabled = false;
+            withdrawButton.classList.remove('opacity-50', 'cursor-not-allowed');
+          });
+      });
 
-            //await setUpOfferWall('load');
+      document.querySelector('#show_ad').addEventListener('click', async (element) => {
 
-            let c;
-            try {
+        const adsProviders = {
+          giga: appState.userData.gigaLimit,
+          adexium: appState.userData.adexiumLimit,
+          richAds: appState.userData.richAdsLimit,
+          adexTra: appState.userData.adexTraLimit,
+        };
 
-                c = "bot";
-                const botSettings = await axios.post('/bot-settings', {
-                    tg
-                });
-                const sets = botSettings.data;
+        const moneyTagId = appState.userData.moneyTagId;
 
-                Object.entries(sets).forEach(key => {
-                    appState.userData[key[0]] = key[1];
-                });
+        if (appState.userData.hourlyTasks === 0) {
+          resetShowedAds();
+        }
 
-                c = "user";
-                const userSettings = await axios.post('/user-settings', {
-                    tg
-                });
+        resetShowedAds();
 
-                const userData = userSettings.data;
+        const showed = localStorage.getItem('showedProvider');
+        if (!showed) {
+          Toastify({
+            ...toastifyConfig,
+            text: `Ads provider data not initiated!`,
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
 
-                if (userData.new === true) {
-                    return window.location.href = "/register.html";
-                };
+          return;
+        }
 
-                const { lastHour, today: todayTasks, totalEarned, totalCount } = userData.adsTaskStats;
+        let showedProvider = JSON.parse(showed);
+        console.log('Showed providers:', showedProvider);
 
-                console.log(userData);
+        let provider =
+          adsProviders.giga > showedProvider.giga
+            ? 'giga'
+            : adsProviders.adexium > showedProvider.adexium
+              ? 'adexium'
+              : adsProviders.richAds > showedProvider.richAds
+                ? 'richAds'
+                : adsProviders.adexTra > showedProvider.adexTra
+                  ? 'adexTra'
+                  : null;
 
-                Object.entries(userData).forEach(key => {
-                    appState.userData[key[0]] = key[1];
-                });
+        if (!provider) {
+          Toastify({
+            ...toastifyConfig,
+            text: `You have reached the maximum number of ads for this hour. Please try again later.`,
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+          return;
+        }
 
-                appState.userData.tgTasks = userData.tgTasks.reverse();
-                appState.userData.referredUsers = userData.referredUsers.reverse();
+        element.target.disabled = true;
+        let watched;
+        let adId;
 
-                appState.userData.totalEarned = totalEarned;
-                appState.userData.totalEarnedPlusStreak = userData.bonuses + totalEarned;
-                appState.userData.todayTasks = todayTasks;
-                appState.userData.hourlyTasks = lastHour;
-                appState.userData.lifetimeTasks = totalCount + userData.tgTasksDone;
+        console.log(provider);
 
-                const today = new Date().setHours(0, 0, 0, 0);
-                const lastCheckin = userData.lastCheckin
-                    ? new Date(userData.lastCheckin).setHours(0, 0, 0, 0)
-                    : null;
+        //alert(provider)
 
-                // daily claim
-                const allow = !lastCheckin || lastCheckin < today;
-
-                appState.userData.isDayClaimable = allow;
-
-                // streak logic
-                if (!lastCheckin) {
-                    // first check-in
-                    appState.userData.streak = 1;
-                } else if (lastCheckin === today - 24 * 60 * 60 * 1000) {
-                    // consecutive day → continue streak
-                    appState.userData.streak += 1;
-                } else if (lastCheckin < today - 24 * 60 * 60 * 1000) {
-                    // missed a day → reset streak
-                    appState.userData.streak = 1;
-                }
-
-                console.log(appState.userData);
-                updateUserData();
-                setupNavigation();
-
-                document.getElementById('app-loader').style.display = 'none';
-                document.body.className = "bg-[#121212] text-gray-900 font-sans";
-                document.getElementById('app').classList.remove('hidden');
-
-                showAd();
-
-            } catch (e) {
-                console.error('Error fetching ' + c + ' settings:', e);
-                Toastify({
-                    ...toastifyConfig,
-                    text: e.response?.data || 'Failed to fetch ' + c + ' settings',
-                    'style.background': 'linear-gradient(to right, #f87171, #ef4444)'
-                }).showToast();
+        try {
+          if (provider === 'giga') {
+            const aa = await window.showGiga();
+            console.log('Giga result: ', aa);
+            if (aa) {
+              watched = true;
+              showedProvider.giga += 1;
             }
-        });
+          } else if (provider === 'adexium') {
+            const adexiumAds = new AdexiumWidget({
+              wid: appState.userData.adexiumId,
+              adFormat: 'interstitial',
+              debug: true,
+            });
+            adexiumAds.requestAd('interstitial');
 
+            await new Promise((resolve, reject) => {
+              adexiumAds.on('adReceived', async (ad) => {
+                adId = ad.id;
+                adexiumAds.displayAd(ad);
+              });
+
+              adexiumAds.on('adPlaybackCompleted', () => {
+                watched = true;
+                showedProvider.adexium += 1;
+                resolve();
+              });
+
+              adexiumAds.on('noAdFound', () => {
+                reject('No AD found. Please re-try later!');
+              });
+            });
+          } else if (provider === 'richAds') {
+            window.richardAds = new TelegramAdsController();
+            await window.richardAds.initialize({
+              pubId: '982571',
+              appId: '3137',
+            });
+
+            const aa = await window.richardAds.triggerInterstitialVideo();
+            console.log('RichAds result: ', aa);
+
+            if (aa) {
+              watched = true;
+              showedProvider.richAds += 1;
+            }
+          } else if (provider === 'adexTra') {
+          }
+        } catch (e) {
+          console.log(e);
+          element.target.disabled = false;
+          Toastify({
+            ...toastifyConfig,
+            text: e || `Error while loading ads. Please try again later.`,
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+          return;
+        }
+
+        try {
+          if (!watched) {
+            Toastify({
+              ...toastifyConfig,
+              text: `Sorry ads failed. No reward received!`,
+              'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+            }).showToast();
+            return;
+          }
+
+          const rr = await axios.post('/ads-reward', { tg, provider });
+          console.log(rr.data);
+          const { status, reward, message } = rr.data;
+
+          if (!status) {
+            throw new Error();
+          }
+
+          localStorage.setItem('showedProvider', JSON.stringify(showedProvider));
+
+          appState.userData.balance += reward;
+          appState.userData.totalEarned += reward;
+          appState.userData.totalEarnedPlusStreak += reward;
+          appState.userData.todayTasks += 1;
+          appState.userData.hourlyTasks += 1;
+          appState.userData.lifetimeTasks += 1;
+          updateUserData();
+
+          Toastify({
+            ...toastifyConfig,
+            text: message || 'Ad rewarded!',
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+        } catch (e) {
+          console.log('Error processing ads reward for user ', e);
+          Toastify({
+            ...toastifyConfig,
+            text: e.response.data || 'Error verifying Ad!',
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+        } finally {
+          element.target.disabled = false;
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          tg.backgroundColor = '#1c1c1c';
+          tg.headerColor = '#1c1c1c';
+          tg.BackButton.hide();
+          tg.requestFullscreen();
+          //tg.expand();
+          tg.disableVerticalSwipes();
+        } catch (e) {}
+
+        if (tg.initDataUnsafe.user) {
+          const user = tg.initDataUnsafe.user;
+          appState.userData.name = `${user.first_name} ${user.last_name}`;
+          appState.userData.photo_url = user.photo_url;
+        } else {
+          document.body.innerHTML =
+            '<h1 class="text-center text-red-500 mt-20">Telegram Web App is not ready</h1>';
+          return;
+        }
+
+        setUpOfferWall('load');
+
+        let c;
+        try {
+          c = 'bot';
+          const botSettings = await axios.post('/bot-settings', {
+            tg,
+          });
+          const sets = botSettings.data;
+
+          Object.entries(sets).forEach((key) => {
+            appState.userData[key[0]] = key[1];
+          });
+
+          c = 'user';
+          const userSettings = await axios.post('/user-settings', {
+            tg,
+          });
+
+          const userData = userSettings.data;
+
+          if (userData.new === true) {
+            return (window.location.href = '/register.html');
+          }
+
+          const { lastHour, today: todayTasks, totalEarned, totalCount } = userData.adsTaskStats;
+
+          Object.entries(userData).forEach((key) => {
+            appState.userData[key[0]] = key[1];
+          });
+
+          appState.userData.tgTasks = userData.tgTasks.reverse();
+          appState.userData.referredUsers = userData.referredUsers.reverse();
+
+          appState.userData.totalEarned = totalEarned;
+          appState.userData.totalEarnedPlusStreak = userData.bonuses + totalEarned;
+          appState.userData.todayTasks = todayTasks;
+          appState.userData.hourlyTasks = lastHour;
+          appState.userData.lifetimeTasks = totalCount + userData.tgTasksDone;
+
+
+          const lastDirectLinkVisit = userData.lastDirectLinkVisit ? Math.floor((new Date() - new Date(userData.lastDirectLinkVisit)) / 1000) : null;
+
+          console.log('Last direct link visit:', lastDirectLinkVisit);
+
+          if (!lastDirectLinkVisit || lastDirectLinkVisit > appState.userData.directLinkCooldown) {
+            appState.userData.canClick = true;
+          };
+
+          const today = new Date().setHours(0, 0, 0, 0);
+          const lastCheckin = userData.lastCheckin
+            ? new Date(userData.lastCheckin).setHours(0, 0, 0, 0)
+            : null;
+
+          // daily claim
+          const allow = !lastCheckin || lastCheckin < today;
+
+          appState.userData.isDayClaimable = allow;
+
+          // streak logic
+          if (!lastCheckin) {
+            // first check-in
+            appState.userData.streak = 1;
+          } else if (lastCheckin === today - 24 * 60 * 60 * 1000) {
+            // consecutive day → continue streak
+            appState.userData.streak += 1;
+          } else if (lastCheckin < today - 24 * 60 * 60 * 1000) {
+            // missed a day → reset streak
+            appState.userData.streak = 1;
+          }
+
+          console.log(appState.userData);
+          updateUserData();
+          setupNavigation();
+
+          document.getElementById('app-loader').style.display = 'none';
+          document.body.className = 'bg-[#121212] text-gray-900 font-sans';
+          document.getElementById('app').classList.remove('hidden');
+
+          showAd();
+        } catch (e) {
+          console.error('Error fetching ' + c + ' settings:', e);
+          Toastify({
+            ...toastifyConfig,
+            text: e.response?.data || 'Failed to fetch ' + c + ' settings',
+            'style.background': 'linear-gradient(to right, #f87171, #ef4444)',
+          }).showToast();
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>

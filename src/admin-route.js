@@ -9,10 +9,17 @@ router.use(express.urlencoded({ extended: true}));
 function convertNumbers(obj) {
   const result = {};
   for (const [key, value] of Object.entries(obj)) {
+
+    if (value === ''){
+        result[key] = value;
+        continue;
+    }
+
     if (Array.isArray(value)) {
-      result[key] = value.map(v =>
-        isNaN(v) ? v : Number(v)
-      );
+      result[key] = value.map(v => {
+        if (v === '') return v;
+        return isNaN(v) ? v : Number(v);
+      });
     } else {
       result[key] = isNaN(value) ? value : Number(value);
     }
@@ -33,12 +40,12 @@ router.use(session({
     }
 }));
 
-/*
+
 router.use((req, res, next) => {
-    req.session.admin = true;
+    //req.session.admin = true;
     next();
 });
-*/
+
 
 
 router.get('/', (req, res) => {
@@ -122,9 +129,7 @@ router.get('/dashboard', async (req, res) => {
             return res.render("error", { message: "Couldn't fetch admin settings!" });
         };
     };
-
     data.page = page;
-    console.log(data)
     return res.render("dashboard", data);
 });
 
@@ -137,10 +142,17 @@ router.post('/settings', async (req, res) => {
     if (!newDatas){
         return res.status(400).send("Invalid admin request!");
     };
+
     if (newDatas.daysEarning){
         newDatas.daysEarning = JSON.parse(newDatas.daysEarning).map(d => d.value);
     }else{
-        delete newDatas.daysEarning;
+        newDatas.daysEarning = [];
+    };
+
+    if (newDatas.directLinks){
+        newDatas.directLinks = JSON.parse(newDatas.directLinks).map(d => d.value);
+    }else{
+        newDatas.directLinks = [];
     };
 
     if (newDatas.password){
@@ -154,6 +166,7 @@ router.post('/settings', async (req, res) => {
     await UPDATE_USER("bot", {
         $set: newDatas
     });
+    console.log("SETTINGS UPDATED")
     newDatas.page = "settings";
     res.redirect("/admin/dashboard?page=settings");
 });
