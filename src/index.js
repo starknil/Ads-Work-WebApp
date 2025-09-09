@@ -115,8 +115,7 @@ app.post('/register', async (req, res) => {
       throw new Error('An account found for user, please refresh the page!');
     }
 
-    let channels = ['AdWorksyNews', 'Airdrops_Galaxy', 'CryptoAirdropRush'];
-    channels = ['codingdemos'];
+    let channels = ['AdWorksyNews'];
     const joinedAll = await Promise.all(
       channels.map((c) => {
         return bot.telegram.getChatMember(`@${c}`, userId);
