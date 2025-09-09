@@ -312,7 +312,7 @@ const FETCH_DASHBOARD = async () => {
       withdraws.aggregate([{ $group: { _id: null, total: { $sum: "$amount" } } }]).toArray(),
       withdraws.find({}).sort({ createdAt: -1 }).limit(10).toArray(),
       users.countDocuments({ createdAt: { $gte: todayStart } }),
-      adsTaskHistory.countDocuments({ createdAt: { $gte: todayStart } }),
+      adsTaskHistory.countDocuments({ watchedAt: { $gte: todayStart } }),
       tgTasks.aggregate([
         { $match: { createdAt: { $gte: todayStart } } },
         { $project: { count: { $size: "$performedBy" } } },
@@ -390,6 +390,7 @@ module.exports = {
   ADD_TASK,
   GET_TASK,
   UPDATE_TASK,
+  EDIT_TASK,
   DELETE_TASK,
   ADD_WITHDRAWAL,
   GET_WITHDRAWAL,
