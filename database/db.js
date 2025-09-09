@@ -325,11 +325,12 @@ const FETCH_DASHBOARD = async () => {
     const telegramTaskCount = tgTaskAgg[0]?.total || 0;
     const totalTasks = adsTaskCount + telegramTaskCount;
 
-    const lastTaskCompleted = [lastAds[0]?.createdAt, lastTg[0]?.createdAt]
+    /*const lastTaskCompleted = [lastAds[0]?.createdAt, lastTg[0]?.createdAt]
       .filter(Boolean)
       .sort()
       .pop() || null;
-
+*/
+const lastTaskCompleted = lastAds[0]?.watchedAt || null;
       const totalWithdraws = withdrawAgg[0]?.total || 0;
 
 
