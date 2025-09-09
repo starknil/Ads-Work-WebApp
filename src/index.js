@@ -394,10 +394,7 @@ app.post('/ads-reward', async (req, res) => {
           refererEarnings: percentage,
         },
       });
-      bot.telegram.sendMessage(upline, `<b>🎉 Congratulations!</b> You've earned ${percentage}(${referralEarnings}%) ${currency} from user ${userId} watching an ad!`, {
-        parse_mode: 'HTML',
-      });
-    }
+    };
 
     if (totalCount === 5 && upline && !uplineDirectBonus) {
       await UPDATE_USER(userId, {
