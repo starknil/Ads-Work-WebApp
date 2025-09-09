@@ -350,7 +350,7 @@ app.post('/ads-reward', async (req, res) => {
       throw new Error("Failed to get app's configuration!");
     }
 
-    const { currency, dailyTaskLimit, hourlyTaskLimit, adsReward, referralDirectBonus } = bott;
+    const { currency, dailyTaskLimit, hourlyTaskLimit, adsReward, referralDirectBonus, referralEarnings } = bott;
 
     const { adsTaskStats, upline, uplineDirectBonus } = pro[0];
 
@@ -384,6 +384,21 @@ app.post('/ads-reward', async (req, res) => {
       message: `🎉 You earned ${adsReward} ${currency} for viewing the ad!`,
     });
 
+
+    if (upline){
+      const percentage = (adsReward * referralEarnings) / 100;
+      console.log("Upline earn " + percentage +" "+currency+" from user "+userId);
+      await UPDATE_USER(Number(upline), {
+        $inc: {
+          balance: percentage,
+          refererEarnings: percentage,
+        },
+      });
+      bot.telegram.sendMessage(upline, `<b>🎉 Congratulations!</b> You've earned ${percentage}(${referralEarnings}%) ${currency} from user ${userId} watching an ad!`, {
+        parse_mode: 'HTML',
+      });
+    }
+
     if (totalCount === 5 && upline && !uplineDirectBonus) {
       await UPDATE_USER(userId, {
         $set: {
@@ -391,7 +406,7 @@ app.post('/ads-reward', async (req, res) => {
         },
       });
 
-      await UPDATE_USER(upline, {
+      await UPDATE_USER(Number(upline), {
         $inc: {
           balance: referralDirectBonus,
           refererEarnings: referralDirectBonus,
