@@ -1257,7 +1257,7 @@
           div.innerHTML = `
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <h4 class="font-semibold text-sm text-white">
+                                    <h4 class="font-semibold text-sm text-white truncate">
                                         ${type === 'tg' ? 'Join ' : 'Visit '}${username}
                                     </h4>
                                     <p class="text-xs text-white opacity-80 mt-1">${type === 'tg' ? 'Join channel' : 'Visit site'} to earn</p>
@@ -1684,8 +1684,6 @@
           resetShowedAds();
         }
 
-        resetShowedAds();
-
         const showed = localStorage.getItem('showedProvider');
         if (!showed) {
           Toastify({
@@ -1693,9 +1691,8 @@
             text: `Ads provider data not initiated!`,
             'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
           }).showToast();
-
           return;
-        }
+        };
 
         let showedProvider = JSON.parse(showed);
         console.log('Showed providers:', showedProvider);
