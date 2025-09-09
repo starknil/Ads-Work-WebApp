@@ -1417,7 +1417,12 @@
         const ele = e.currentTarget;
         const url = ele.href;
         const start = Date.now();
-        window.open(url, '_blank', 'noopener,noreferrer');
+        
+        try {
+          window.open(url, '_blank', 'noopener,noreferrer');
+        } finally {
+          window.__linkRewardShowing = false;
+        }
 
         const timeSpent = await new Promise(async (resolve, reject) => {
           const processIt = () => {
