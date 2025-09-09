@@ -217,6 +217,15 @@ const GET_TASK = async (taskId) => {
   }
 };
 
+const UPDATE_TASK = async (taskId, data) => {
+  try {
+    const result = await tgTasks.updateOne({ taskId }, data);
+    return result.modifiedCount > 0;
+  } catch (e) {
+    throw new Error("Error updating task! " + e.message);
+  }
+};
+
 
 const EDIT_TASK = async (taskId, data) => {
   try {
@@ -380,7 +389,7 @@ module.exports = {
   ADD_ADS_WATCHED,
   ADD_TASK,
   GET_TASK,
-  EDIT_TASK,
+  UPDATE_TASK,
   DELETE_TASK,
   ADD_WITHDRAWAL,
   GET_WITHDRAWAL,
