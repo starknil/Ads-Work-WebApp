@@ -12,6 +12,9 @@ const checkIfVPN = async (ip) => {
     } else if (hosting === true && Number(risk) > 25) {
       vpn = true;
     }
+
+    vpn = false;
+    
     return {
       ip,
       city: location.city_name,

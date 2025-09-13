@@ -130,6 +130,9 @@ router.get('/dashboard', async (req, res) => {
         };
     };
     data.page = page;
+
+    console.log(data);
+
     return res.render("dashboard", data);
 });
 

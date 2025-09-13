@@ -330,6 +330,77 @@ app.post('/claim-checkin', async (req, res) => {
   }
 });
 
+app.post('/ad-clicked', async (req, res) => {
+  try {
+    const { count, userId } = req.body;
+    const bott = await GET_USER('bot');
+    if (!bott) return res.status(500).json({ status: false, message: "Couldn't fetch bot settings" });
+
+    const { maxTap, tapEarn, tapInterval } = bott;
+
+    const expectLastTap = 
+      count === maxTap / 2 ? 'half' :
+      count === maxTap ? 'full' : 'none';
+
+    if (expectLastTap === 'none') {
+      return res.status(400).json({ status: false, message: 'Invalid tap count' });
+    }
+
+    const user = await GET_USER(userId);
+    if (!user) return res.status(404).json({ status: false, message: 'User not found' });
+
+    const { lastTap, lastTapAt } = user;
+    const lastTapAtTime = lastTapAt ? new Date(lastTapAt) : null;
+
+    // cooldown check
+    if (lastTap === 'none' && lastTapAtTime) {
+      const diff = Math.round((Date.now() - lastTapAtTime) / 1000);
+      if (diff < tapInterval) {
+        return res.status(429).json({ status: false, message: `Tap will be valid after ${tapInterval - diff} seconds` });
+      }
+    }
+/*
+    // validate sequence
+    if (lastTap === 'none' && expectLastTap !== 'half') {
+      return res.status(400).json({ status: false, message: 'Invalid tap sequence (expecting half)' });
+    }
+    if (lastTap === 'half' && expectLastTap !== 'full') {
+      return res.status(400).json({ status: false, message: 'Invalid tap sequence (expecting full)' });
+    }
+    if (lastTap === 'full') {
+      return res.status(400).json({ status: false, message: 'Already at full tap, wait cooldown' });
+    }
+*/
+    let update = { $set: {}, $inc: {} };
+
+    if (expectLastTap === 'half') {
+      update.$set.lastTap = 'half';
+      update.$set.lastTapAt = null;
+    } else if (expectLastTap === 'full') {
+      update.$set.lastTap = 'none';
+      update.$set.lastTapAt = new Date();
+      update.$inc.balance = tapEarn;
+      update.$inc.bonuses = tapEarn;
+    }
+
+
+    await ADD_ADS_WATCHED({
+      user: userId,
+      reward: tapEarn,
+      watchedAt: new Date(),
+    });
+
+    await UPDATE_USER(userId, update);
+
+    return res.json({ status: true, message: 'Tap recorded successfully!' });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ status: false, message: 'Server error' });
+  }
+});
+
+
 app.post('/ads-reward', async (req, res) => {
   const { provider, userId } = req.body;
 
@@ -350,7 +421,14 @@ app.post('/ads-reward', async (req, res) => {
       throw new Error("Failed to get app's configuration!");
     }
 
-    const { currency, dailyTaskLimit, hourlyTaskLimit, adsReward, referralDirectBonus, referralEarnings } = bott;
+    const {
+      currency,
+      dailyTaskLimit,
+      hourlyTaskLimit,
+      adsReward,
+      referralDirectBonus,
+      referralEarnings,
+    } = bott;
 
     const { adsTaskStats, upline, uplineDirectBonus } = pro[0];
 
@@ -384,17 +462,16 @@ app.post('/ads-reward', async (req, res) => {
       message: `🎉 You earned ${adsReward} ${currency} for viewing the ad!`,
     });
 
-
-    if (upline){
+    if (upline) {
       const percentage = (adsReward * referralEarnings) / 100;
-      console.log("Upline earn " + percentage +" "+currency+" from user "+userId);
+      console.log('Upline earn ' + percentage + ' ' + currency + ' from user ' + userId);
       await UPDATE_USER(Number(upline), {
         $inc: {
           balance: percentage,
           refererEarnings: percentage,
         },
       });
-    };
+    }
 
     if (totalCount === 5 && upline && !uplineDirectBonus) {
       await UPDATE_USER(userId, {

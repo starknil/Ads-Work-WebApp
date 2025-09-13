@@ -2,7 +2,6 @@ require('dotenv').config();
 
 const bcrypt = require('bcrypt');
 const { MongoClient } = require('mongodb');
-const { useNewReplies } = require('telegraf/future');
 const { MONGO_URI, DB_NAME } = process.env;
 const client = new MongoClient(MONGO_URI);
 let db, users, adsTaskHistory, withdraws, tgTasks;
@@ -41,32 +40,13 @@ const connectDB = async () => {
         adexTraLimit: 0,
         directLinks: [],
         directLinkCooldown: 3600,
+        maxTap: 0,
+        tapEarn: 0,
+        tapInterval: 60,
         createdAt: new Date(),
       });
       console.log('Bot settings initialized in the database.');
     }
-    /*
-    await tgTasks.insertMany([
-      {
-        taskId: 1234567890,
-        type: "tg",
-        isActive: true,
-        username: "codingdemos",
-        reward: 35,
-        performedBy: [],
-        createdAt: new Date(),
-      },
-      {
-        taskId: 434374378,
-        type: "web",
-        isActive: true,
-        username: "gill728",
-        reward: 35,
-        performedBy: [],
-        createdAt: new Date(),
-      }
-    ]);
-    */
   } catch (e) {
     throw new Error('Error connecting to the database ' + e);
   }
@@ -326,20 +306,25 @@ const FETCH_DASHBOARD = async () => {
       users.aggregate([{ $group: { _id: null, total: { $sum: '$balance' } } }]).toArray(),
     ]);
 
-    const telegramTaskCount = tgTaskAgg[0]?.total || 0;
-    const totalTasks = adsTaskCount + telegramTaskCount;
-    const lastTaskCompleted = lastAds[0]?.watchedAt || null;
+    const socialTaskCount = tgTaskAgg[0]?.total || 0;
+    const totalTasks = adsTaskCount + socialTaskCount;
+    const lastAdTaskCompleted = lastAds[0]?.watchedAt || null;
+    const lastSocialTaskCompleted = lastTg[0]?.createdAt || null;
     const totalWithdraws = withdrawAgg[0]?.total || 0;
 
     return {
       totalUsers: totalUsers - 1,
       lastUser: lastUser[0] || null,
+      adsTaskCount,
+      socialTaskCount,
       totalTasks,
-      lastTaskCompleted,
+      lastAdTaskCompleted,
+      lastSocialTaskCompleted,
       totalWithdraws,
       last10Withdraws,
       todayUsers,
-      todayTasks: todayAdsTasks + (todayTgAgg[0]?.total || 0),
+      todayAdsTasks,
+      todaySocialTasks: todayTgAgg[0]?.total || 0,
       todayWithdraws,
       totalEarnings: (balanceAgg[0]?.total || 0) + todayWithdraws,
     };

@@ -31,11 +31,11 @@ const searchUser = (e) => {
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${reward}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timeAgo(createdAt)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button onclick="openEditModal()" class="text-purple-600 hover:text-purple-900 mr-3">
+                      <button onclick="openAddModal('edit', '${taskId}' ,'${username}', '${reward}', '${type}')" class="text-purple-600 hover:text-purple-900 mr-3">
                         <i class="fas fa-edit"></i>
                         Edit
                       </button>
-                      <a href="" onclick="return confirm('Are you sure you want to delete this task?')" class="text-red-600 hover:text-red-900">
+                      <a href="/admin/task?type=delete&id=${taskId}" onclick="return confirm('Are you sure you want to delete this task?')" class="text-red-600 hover:text-red-900">
                         <i class="fas fa-trash"></i>
                         Delete
                       </a>
