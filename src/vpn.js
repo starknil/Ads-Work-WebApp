@@ -13,8 +13,6 @@ const checkIfVPN = async (ip) => {
       vpn = true;
     }
 
-    vpn = false;
-    
     return {
       ip,
       city: location.city_name,

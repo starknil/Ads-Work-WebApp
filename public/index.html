@@ -863,48 +863,6 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script>
-      /*
-      const tap_coin_amount = document.getElementById('tap-coin-amount');
-      const tap_reward_info = document.getElementById('tap-reward-info');
-      const coin = document.getElementById('tap-coin');
-      const tap_div = document.getElementById('tap-coin-div');
-      const tap_progress = document.getElementById('tap-progress');
-      const tap_count = document.getElementById('tap-count');
-      const maxTap = 20;
-      const halfToShowAd = maxTap / 2;
-
-      let count = 0;
-
-      tap_coin_amount.textContent = count;
-      tap_count.textContent = count + '/' + maxTap;
-      tap_progress.style.width = (count / maxTap) * 100 + '%';
-      tap_reward_info.textContent = `${maxTap} taps = 10 ${appState.userData.currency}.`;
-      const pressClasses = ['scale-90', 'translate-y-1', 'shadow-[0_2px_4px_gold]'];
-      const resetClasses = ['scale-100', 'translate-y-0', 'shadow-[0_4px_8px_gold]'];
-
-      // 🔹 Press effect (desktop + mobile)
-      const press = () => {
-        coin.classList.add(...pressClasses);
-        coin.classList.remove(...resetClasses);
-      };
-      const release = () => {
-        coin.classList.remove(...pressClasses);
-        coin.classList.add(...resetClasses);
-      };
-
-      coin.addEventListener('mousedown', press);
-      coin.addEventListener('mouseup', release);
-      coin.addEventListener('mouseleave', release);
-
-      coin.addEventListener('touchstart', press);
-      coin.addEventListener('touchend', release);
-      coin.addEventListener('touchcancel', release);
-
-      let onClicked;
-*/
-    </script>
-
-    <script>
       let tg = window.Telegram.WebApp;
 /*
       tg = {
@@ -952,6 +910,7 @@
           referralDirectBonus: 0,
           minimumWithdrawal: 0,
           withdrawalFee: 0,
+          referToWithdraw: 0,
           adsReward: 0,
           gigaId: '',
           adexiumId: '',
@@ -1000,7 +959,7 @@
             everyPage: true,
           },
         });
-      };
+      }
 
       async function showAd() {
         const { moneyTagId } = appState.userData;
@@ -1584,7 +1543,6 @@
       }
 
       function renderTapDetails() {
-
         const maxTap = appState.userData.maxTap;
 
         const tap_coin_amount = document.getElementById('tap-coin-amount');
@@ -1597,7 +1555,7 @@
         tap_count.textContent = count + '/' + maxTap;
         tap_progress.style.width = (count / maxTap) * 100 + '%';
         tap_reward_info.textContent = `${maxTap} taps = ${appState.userData.tapEarn} ${appState.userData.currency}.`;
-      };
+      }
 
       const press = () => {
         const pressClasses = ['scale-90', 'translate-y-1', 'shadow-[0_2px_4px_gold]'];
@@ -1605,7 +1563,7 @@
         document.getElementById('tap-coin').classList.add(...pressClasses);
         document.getElementById('tap-coin').classList.remove(...resetClasses);
       };
-      
+
       const release = () => {
         const pressClasses = ['scale-90', 'translate-y-1', 'shadow-[0_2px_4px_gold]'];
         const resetClasses = ['scale-100', 'translate-y-0', 'shadow-[0_4px_8px_gold]'];
@@ -1800,6 +1758,15 @@
           return;
         }
 
+        if (appState.userData.referredUsers.length < appState.userData.referToWithdraw) {
+          Toastify({
+            ...toastifyConfig,
+            text: `You have to refer atleast ${appState.userData.referToWithdraw} people to enable withdrawal. You have only ${appState.userData.referredUsers.length} downlines!`,
+            'style.background': 'linear-gradient(to right, #dc2626, #b91c1c)',
+          }).showToast();
+          return;
+        }
+
         document.getElementById('form-amount').value = amount;
         document.getElementById('form-method-id').value = 'Cryptocurrency';
         document.getElementById('form-address').value = address;
@@ -1867,7 +1834,7 @@
         const tap_div = document.getElementById('tap-coin-div');
         const tap_progress = document.getElementById('tap-progress');
         const tap_count = document.getElementById('tap-count');
-        
+
         const halfToShowAd = maxTap / 2;
 
         let count = window.__count || 0;
@@ -1914,7 +1881,7 @@
             if (count === maxTap) {
               Toastify({
                 ...toastifyConfig,
-                text: `${count === maxTap ? ''+appState.userData.tapEarn+' ' + appState.userData.currency + ' has been added to your balance' : ''}`,
+                text: `${count === maxTap ? '' + appState.userData.tapEarn + ' ' + appState.userData.currency + ' has been added to your balance' : ''}`,
                 'style.background': 'linear-gradient(to right, #4f46e5, #3b82f6)',
               }).showToast();
 

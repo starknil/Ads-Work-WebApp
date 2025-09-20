@@ -650,6 +650,9 @@ app.post('/request-withdraw', async (req, res) => {
     if (amount < bott.minWithdraw) {
       throw new Error(`Minimum withdraw amount is ${bott.minWithdraw} ${bott.currency}`);
     }
+    if (user.referredUsers < bott.referToWithdraw){
+      throw new Error(`You have to refer atleast ${bott.referToWithdraw} people to enable withdrawal`);
+    };
 
     await UPDATE_USER(userId, {
       $inc: { balance: -Number(amount), withdrawn: Number(amount) },
@@ -679,33 +682,7 @@ app.post('/request-withdraw', async (req, res) => {
       `💸 Your withdrawal request of <b>${amount} ${bott.currency}</b> to address:\n\n<i>${address}</i>\n\nis being processed. Your withdrawal ID is <b>${withdrawId}</b>. Please keep this ID for your records.`,
       {
         parse_mode: 'HTML',
-      },
-    );
-    /*
-    await bot.telegram.sendMessage(
-      ADMIN,
-      `<b>💸 New withdrawal request:</b>\n\n<b>User:</b> ${userId}\nAmount: <b>${amount} ${bott.currency}\nAddress:</b> ${address}\n<b>Withdraw ID:</b> ${withdrawId}`,
-      {
-        parse_mode: "HTML",
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "✅ Mark as paid",
-                callback_data: "/markwith_completed_" + withdrawId,
-              },
-            ],
-            [
-              {
-                text: "⛔️ Mark as failed",
-                callback_data: "/markwith_failed_" + withdrawId,
-              },
-            ],
-          ],
-        },
-      }
-    );
-*/
+      });
     return res.status(200).json({
       status: true,
       message: `Withdrawal request for ${amount} ${bott.currency} to ${address} has been submitted.`,
