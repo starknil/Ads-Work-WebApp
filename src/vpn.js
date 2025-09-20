@@ -2,7 +2,7 @@ const axios = require("axios");
 
 const checkIfVPN = async (ip) => {
   try {
-    const { data } = await axios.get("https://proxycheck.io/v3/" + ip);
+    const { data } = await axios.get("https://proxycheck.io/v3/" + ip+"?key=4b50f3498370aa0795eec7cd69d13cca8c3f430e9403236de6e34ad1c64fe225");
     const { detections, location } = data[ip];
     const { risk, hosting, ...otherFlags } = detections;
 
@@ -12,6 +12,8 @@ const checkIfVPN = async (ip) => {
     } else if (hosting === true && Number(risk) > 25) {
       vpn = true;
     }
+
+    console.log(data);
 
     return {
       ip,
